@@ -1,0 +1,203 @@
+<div class="container-fluid py-5">
+    <div class="d-flex mb-3 justify-content-between">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb text-primary">
+                <li class="breadcrumb-item text-primary" style="cursor: pointer;" aria-current="page" (click)="routeTo('dashboard/home')">Dashboard</li>
+                <li class="breadcrumb-item breadcrumb-active" style="cursor: pointer;" aria-current="page">Cottura</li>
+            </ol>
+        </nav>
+        <h4>{{user.username}}</h4>
+    </div>
+    <div *ngIf="selectedExecution" class="row shadow p-4 rounded" style="max-height: 75vh; overflow: auto;">
+        <div *ngIf="selectedExecution.recipe" class="col-12 d-flex flex-column justify-content-between h-100 border mb-3 rounded py-3">
+            <div class="d-flex flex-column w-100">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <div class="d-flex align-items-baseline gap-3">
+                        <h1 class="fs-1 mb-0 d-inline">{{selectedExecution.recipe.name}}</h1>
+                        <div class="fst-italic fs-5">
+                            <span *ngIf="selectedExecution.portion_unit == 'person'"><i class="fa-solid fa-user me-2"></i>x {{selectedExecution.portion_number}} persone</span>
+                            <span *ngIf="selectedExecution.portion_unit == 'gram'"><i class="fa-solid fa-weight-hanging me-2"></i>x {{selectedExecution.portion_number}} grammi</span>
+                            <span *ngIf="selectedExecution.portion_unit == 'bakingTray'"><i class="fa-solid fa-layer-group me-2"></i>x {{selectedExecution.portion_number}} teglie</span>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-3 align-items-center">
+                        <button class="btn btn-lg btn-success" (click)="openPDF()"><i class="fa-solid fa-download me-3"></i>Scarica report</button>
+                    </div>
+                </div>
+                <!-- <div class="fs-5">
+                    <span class="me-1"><i class="fa-brands fa-envira" [style.color]="selectedExecution.color"></i></span>
+                    <span class="fw-bold" [style.color]="selectedExecution.color">{{selectedExecution.recipe.footprint_score | number : '1.0-1'}}</span>
+                    <span class="fw-bold"> / 10</span>
+                </div> -->
+            </div>
+            
+            <div class="rounded px-3 d-flex flex-column justify-content-between flex-grow-1" style="background-color: white;">
+                <!-- <div class="row">
+                    <div class="col-6 ps-0">
+                        <h5>Ingredienti</h5>
+                        <ul class="list-group">
+                            <li *ngFor="let ingredient of selectedExecution.recipe.ingredients; index as i" class="list-group-item d-flex justify-content-between align-items-center">
+                              <img class="ingredient-img" [src]="ingredient.cover_image_name" alt="">  
+                              <span>{{ingredient.name}}</span>
+                              <span class="badge text-bg-primary rounded-pill">{{selectedRecipe.recipeIngredients[i].weight}} gr.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex justify-content-center w-100">
+                            <div class="position-relative overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded h-300px
+                            d-flex justify-content-center align-content-center overflow-hidden" style="width: 300px;" [style.background-image]="'url('+selectedExecution.recipe.cover+')'">                            
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+                <div class="row d-flex mt-2 px-0">
+                    <div class="w-50 px-0">
+                        <h5>Data Cottura</h5>
+                        <p>{{selectedExecution.creation_date | date : 'short'}}</p>
+                    </div>
+                    <div class="w-50">
+                        <h5>Porzioni</h5>
+                        <p *ngIf="selectedExecution.portion_unit == 'person'"><i class="fa-solid fa-user me-2"></i>x {{selectedExecution.portion_number}} persone</p>
+                        <p *ngIf="selectedExecution.portion_unit == 'gram'"><i class="fa-solid fa-weight-hanging me-2"></i>x {{selectedExecution.portion_number}} grammi</p>
+                        <p *ngIf="selectedExecution.portion_unit == 'bakingTray'"><i class="fa-solid fa-layer-group me-2"></i>x {{selectedExecution.portion_number}} teglie</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 px-0">
+                        <h5>Note</h5>
+                        <p>{{selectedExecution.note}}</p>
+                    </div>
+                </div>
+                <!-- <div class="row mt-5">
+                    <div class="col-12 ps-0">
+                        <h5>Descrizione ricetta</h5>
+                        <p>{{selectedExecution.description}} Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid, iure quas, a deleniti doloribus reiciendis esse, amet necessitatibus ullam ut voluptatem quo similique libero placeat perferendis corrupti ad iusto reprehenderit. Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit est neque maiores officia fugiat incidunt totam dolorum molestiae praesentium. Necessitatibus ipsum dolorem, facilis corporis eveniet magnam amet iste nobis quibusdam. Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint aperiam minus voluptates, laboriosam consequatur vero voluptatibus alias illum ea, totam, optio blanditiis dolores? Minima consequatur adipisci, accusantium magni voluptas qui! Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio ratione consequatur temporibus quam repellendus. Odit vel debitis dolor doloremque saepe optio esse, fugit expedita aliquid odio, iste laudantium obcaecati modi.</p>
+                    </div>
+                </div>
+                <div class="row px-0">
+                    <div class="my-3 d-flex justify-content-between gap-2 px-0">
+                        <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
+                            <div class="card-header">Consumo di acqua</div>
+                            <div class="card-body d-flex justify-content-center align-items-center">
+                                <h3 class="card-title">{{totalWF / 1000 | number: "1.0-3"}} litri</h3>
+                            </div>
+                        </div>
+                        <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
+                            <div class="card-header">Consumo di suolo</div>
+                            <div class="card-body d-flex justify-content-center align-items-center">
+                                <h3 class="card-title">{{totalEF | number: "1.0-3"}} mq</h3>
+                            </div>
+                        </div>
+                        <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
+                            <div class="card-header">Emissioni di CO2</div>
+                            <div class="card-body d-flex justify-content-center align-items-center">
+                                <h3 class="card-title">{{totalCF | number: "1.0-3"}} kg</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+        <div class="rounded border py-3">
+            <app-results [selectedExecutionId]="selectedExecutionId"></app-results>
+        </div>
+    </div>
+</div>
+
+<div id="results" *ngIf="showResults">
+    <div class="container-fluid py-5">
+        <div *ngIf="selectedExecution" class="row shadow p-4 rounded">
+            <div *ngIf="selectedExecution.recipe" class="col-12 d-flex flex-column justify-content-between h-100 border mb-3 rounded py-3">
+                <div class="d-flex flex-column w-100">
+                    <div class="d-flex w-100 justify-content-between align-items-center">
+                        <div class="d-flex align-items-baseline gap-3">
+                            <h1 class="fs-1 mb-0 d-inline">{{selectedExecution.recipe.name}}</h1>
+                            <div class="fst-italic fs-5">
+                                <span *ngIf="selectedExecution.portion_unit == 'person'"><i class="fa-solid fa-user me-2"></i>x {{selectedExecution.portion_number}} persone</span>
+                                <span *ngIf="selectedExecution.portion_unit == 'gram'"><i class="fa-solid fa-weight-hanging me-2"></i>x {{selectedExecution.portion_number}} grammi</span>
+                                <span *ngIf="selectedExecution.portion_unit == 'bakingTray'"><i class="fa-solid fa-layer-group me-2"></i>x {{selectedExecution.portion_number}} teglie</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fs-5">
+                        <span class="me-1"><i class="fa-brands fa-envira" [style.color]="selectedExecution.color"></i></span>
+                        <span class="fw-bold" [style.color]="selectedExecution.color">{{selectedExecution.recipe.footprint_score | number : '1.0-1'}}</span>
+                        <span class="fw-bold"> / 10</span>
+                    </div>
+                </div>
+                
+                <div class="rounded px-3 d-flex flex-column justify-content-between flex-grow-1" style="background-color: white;">
+                    <div class="row">
+                        <div class="col-6 ps-0">
+                            <h5>Ingredienti</h5>
+                            <ul class="list-group">
+                                <li *ngFor="let ingredient of selectedExecution.recipe.ingredients; index as i" class="list-group-item d-flex justify-content-between align-items-center">
+                                  <img class="ingredient-img" [src]="ingredient.cover_image_name" alt="">  
+                                  <span>{{ingredient.name}}</span>
+                                  <span class="badge text-bg-primary rounded-pill">{{selectedRecipe.recipeIngredients[i].weight}} gr.</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex justify-content-center w-100">
+                                <div class="position-relative overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded h-300px
+                                d-flex justify-content-center align-content-center overflow-hidden" style="width: 300px;" [style.background-image]="'url('+selectedExecution.recipe.cover+')'">                            
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row d-flex mt-2 px-0">
+                        <div class="w-50 px-0">
+                            <h5>Data Cottura</h5>
+                            <p>{{selectedExecution.creation_date | date : 'short'}}</p>
+                        </div>
+                        <div class="w-50">
+                            <h5>Porzioni</h5>
+                            <p *ngIf="selectedExecution.portion_unit == 'person'"><i class="fa-solid fa-user me-2"></i>x {{selectedExecution.portion_number}} persone</p>
+                            <p *ngIf="selectedExecution.portion_unit == 'gram'"><i class="fa-solid fa-weight-hanging me-2"></i>x {{selectedExecution.portion_number}} grammi</p>
+                            <p *ngIf="selectedExecution.portion_unit == 'bakingTray'"><i class="fa-solid fa-layer-group me-2"></i>x {{selectedExecution.portion_number}} teglie</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 px-0">
+                            <h5>Note</h5>
+                            <p>{{selectedExecution.note}}</p>
+                        </div>
+                    </div>
+                    <div class="row mt-5">
+                        <div class="col-12 ps-0">
+                            <h5>Descrizione ricetta</h5>
+                            <p>{{selectedExecution.description}} Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid, iure quas, a deleniti doloribus reiciendis esse, amet necessitatibus ullam ut voluptatem quo similique libero placeat perferendis corrupti ad iusto reprehenderit. Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit est neque maiores officia fugiat incidunt totam dolorum molestiae praesentium. Necessitatibus ipsum dolorem, facilis corporis eveniet magnam amet iste nobis quibusdam. Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint aperiam minus voluptates, laboriosam consequatur vero voluptatibus alias illum ea, totam, optio blanditiis dolores? Minima consequatur adipisci, accusantium magni voluptas qui! Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio ratione consequatur temporibus quam repellendus. Odit vel debitis dolor doloremque saepe optio esse, fugit expedita aliquid odio, iste laudantium obcaecati modi.</p>
+                        </div>
+                    </div>
+                    <div class="row px-0">
+                        <div class="my-3 d-flex justify-content-between gap-2 px-0">
+                            <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
+                                <div class="card-header">Consumo di acqua</div>
+                                <div class="card-body d-flex justify-content-center align-items-center">
+                                    <h3 class="card-title">{{totalWF / 1000 | number: "1.0-3"}} litri</h3>
+                                </div>
+                            </div>
+                            <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
+                                <div class="card-header">Consumo di suolo</div>
+                                <div class="card-body d-flex justify-content-center align-items-center">
+                                    <h3 class="card-title">{{totalEF | number: "1.0-3"}} mq</h3>
+                                </div>
+                            </div>
+                            <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
+                                <div class="card-header">Emissioni di CO2</div>
+                                <div class="card-body d-flex justify-content-center align-items-center">
+                                    <h3 class="card-title">{{totalCF | number: "1.0-3"}} kg</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="rounded border py-3">
+                <app-results [selectedExecutionId]="selectedExecutionId"></app-results>
+            </div>
+        </div>
+    </div>
+</div>

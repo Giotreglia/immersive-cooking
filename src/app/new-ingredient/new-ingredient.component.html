@@ -1,0 +1,104 @@
+<div class="container-fluid py-5">
+    <div class="d-flex mb-3 justify-content-between">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb text-primary">
+                <li class="breadcrumb-item text-primary" style="cursor: pointer;" aria-current="page" (click)="routeTo('dashboard/home')">Dashboard</li>
+                <li class="breadcrumb-item breadcrumb-active" style="cursor: pointer;" aria-current="page">Nuovo ingrediente</li>
+            </ol>
+        </nav>
+        <h4>{{user.username}}</h4>
+    </div>
+    <div class="row shadow pt-4 rounded">
+        <div class="col-12 d-flex flex-column justify-content-between h-100">
+            <div class="p-3 pb-0 height">
+                <div class="d-flex flex-column w-100">
+                    <h4>Inserisci i dati del nuovo ingrediente</h4>
+                    <span class="text-secondary">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
+                </div>
+                <div class="row">
+                    <form class="row g-3" id="ingredient-form" (ngSubmit)="submitForm()" method="post">
+                        <div class="col-8">
+                            <div class="row py-0 d-flex justify-content-between flex-column gap-3">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="inputAddress" class="form-label">Nome</label>
+                                            <input type="text" class="form-control" id="inputAddress" name="name" placeholder="Nome ingrediente" [(ngModel)]="ingredientName">        
+                                        </div>
+                                        <div class="col">
+                                            <label for="inputAddress" class="form-label">Categoria</label>
+                                            <select type="text" class="form-select" id="inputAddress" name="category" placeholder="Nome categoria" [(ngModel)]="ingredientCategory"> <!-- [(ngModel)]="ingredient.category" -->
+                                                <option value="">Scegli categoria</option>
+                                                <option *ngFor="let category of categories" [value]="category.id">{{category.name}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="inputAddress2" class="form-label">Kcal/100gr</label>
+                                            <input type="number" class="form-control" id="inputAddress2" name="kcal" placeholder="kilocalorie per 100 grammi" [(ngModel)]="ingredientKcal"> <!-- [(ngModel)]="ingredient.kcal" -->        
+                                        </div>
+                                        <div class="col">
+                                            <label for="inputAddress2" class="form-label">Porzione (gr)</label>
+                                            <input type="number" class="form-control" id="inputAddress2" name="weight" placeholder="peso in grammi della porzione" [(ngModel)]="ingredientWeight">        
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="inputAddress2" class="form-label">Proteine/100gr</label>
+                                            <input type="number" class="form-control" id="inputAddress2" name="proteins" placeholder="proteine"> <!-- [(ngModel)]="ingredient.proteins" -->        
+                                        </div>
+                                        <div class="col">
+                                            <label for="inputAddress2" class="form-label">Carboidrati/100gr</label>
+                                            <input type="number" class="form-control" id="inputAddress2" name="carbohydrates" placeholder="carboidrati"> <!-- [(ngModel)]="ingredient.carbohydrates" -->        
+                                        </div>
+                                        <div class="col">
+                                            <label for="inputAddress2" class="form-label">Grassi/100gr</label>
+                                            <input type="number" class="form-control" id="inputAddress2" name="fats" placeholder="grassi"> <!-- [(ngModel)]="ingredient.fats" -->        
+                                        </div>
+                                        <div class="col">
+                                            <label for="inputAddress2" class="form-label">Zuccheri/100gr</label>
+                                            <input type="number" class="form-control" id="inputAddress2" name="sugars" placeholder="zuccheri"> <!-- [(ngModel)]="ingredient.sugars" -->        
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="inputAddress2" class="form-label">Carbon footprint</label>
+                                            <input type="number" class="form-control" id="inputAddress2" name="CF" placeholder="Coefficiente CF" [(ngModel)]="ingredientCF">        
+                                        </div>
+                                        <div class="col">
+                                            <label for="inputAddress2" class="form-label">Water footprint</label>
+                                            <input type="number" class="form-control" id="inputAddress2" name="WF" placeholder="Coefficiente WF" [(ngModel)]="ingredientWF">        
+                                        </div>
+                                        <div class="col">
+                                            <label for="inputAddress2" class="form-label">Soil footprint</label>
+                                            <input type="number" class="form-control" id="inputAddress2" name="EF" placeholder="Coefficiente EF" [(ngModel)]="ingredientEF">        
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4 input-col pe-0">
+                            <!-- <label class="mb-2">Immagine</label> -->
+                            <label *ngIf="!imageSrc" class="input-label rounded" for="inputGroupFile01"><span class="h-100 d-flex align-items-center justify-content-center">carica immagine</span></label>
+                            <input type="file" class="form-control d-none" id="inputGroupFile01" (change)="onFileSelected($event)" accept=".jpg,.png">
+                            <div class="position-relative" *ngIf="imageSrc" style="height: 410px !important;">
+                                <img class="input-label rounded" [src]="imageSrc" alt="">
+                                <button type="button" class="btn-close" style="position: absolute; top: 5px; right: 5px;" aria-label="Close" (click)="imageSrc = null"></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="d-flex justify-content-end w-100 my-3">
+                    <button class="btn btn-lg btn-primary" type="submit" form="ingredient-form">Salva ingrediente</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,20 @@
+.input-label {
+    border: 1px solid rgb(192, 189, 189);
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    :hover {
+        background-color: lightgray;
+    }
+}
+
+.input-col {
+    padding-top: 32px;
+    :hover {
+        background-color: lightgray;
+        color: white;
+    }
+}

@@ -1,0 +1,36 @@
+<div class="container p-4">
+    <section class="mb-3">
+        <div class="d-flex gap-5 align-items-center">
+            <div class="d-flex flex-column">
+                <h2>Crea o seleziona la tua ricetta</h2>
+                <span class="text-secondary">Crea la tua lezione o selezionala dalle tue ricette</span>
+            </div>
+            <div class="fs-1 text-warning" style="cursor: pointer;"><i class="fa-solid fa-folder-plus"></i></div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <form class="row g-3">
+                <div class="col-8">
+                    <div class="row py-0 d-flex justify-content-between flex-column gap-3">
+                        <div class="col-12">
+                            <label for="inputAddress" class="form-label">Titolo</label>
+                            <input type="text" class="form-control" id="inputAddress" placeholder="Titolo ricetta">
+                        </div>
+                        <div class="col-12">
+                            <label for="inputAddress2" class="form-label">Descrizione</label>
+                            <textarea rows="10" type="text" class="form-control" id="inputAddress2" placeholder="Procedimento ricetta"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 input-col">
+                    <!-- <label class="mb-2">Immagine</label> -->
+                    <label class="input-label rounded" for="inputGroupFile01"><span class="h-100 d-flex align-items-center justify-content-center">carica immagine</span></label>
+                    <input type="file" class="form-control d-none" id="inputGroupFile01">
+                </div>
+            </form>
+        </div>
+    </section>
+
+</div>

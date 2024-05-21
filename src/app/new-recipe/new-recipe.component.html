@@ -1,0 +1,170 @@
+<div class="container-fluid py-5">
+    <div class="d-flex mb-3 justify-content-between">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb text-primary">
+                <li class="breadcrumb-item text-primary" style="cursor: pointer;" aria-current="page" (click)="routeTo('dashboard/home')">Dashboard</li>
+                <li class="breadcrumb-item breadcrumb-active" style="cursor: pointer;" aria-current="page">Nuova ricetta</li>
+            </ol>
+        </nav>
+        <h4>{{user.username}}</h4>
+    </div>
+    <div class="row shadow pt-4 rounded">
+        <div class="col-12 d-flex flex-column justify-content-between h-100">
+            <mat-tab-group [selectedIndex]="selectedIndex">
+                <mat-tab label="Crea la tua ricetta">
+                    <div class="p-3 pb-0 height">
+                        <div class="d-flex flex-column w-100">
+                            <h4>Inserisci i dati della tua ricetta</h4>
+                            <span class="text-secondary">Crea la tua ricetta</span>
+                        </div>
+                        <div class="row">
+                            <form class="row g-3">
+                                <div class="col-8">
+                                    <div class="row py-0 d-flex justify-content-between flex-column gap-3">
+                                        <div class="col-12">
+                                            <label for="inputAddress" class="form-label">Titolo</label>
+                                            <input type="text" class="form-control" id="inputAddress" name="name" placeholder="Titolo ricetta" [(ngModel)]="recipe.name">
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <label for="inputAddress" class="form-label">Numero porzioni</label>
+                                                    <input type="number" class="form-control" id="inputAddress" name="portion_number" placeholder="numero porzioni" [(ngModel)]="recipe.portion_number">        
+                                                </div>
+                                                <div class="col">
+                                                    <label for="inputAddress" class="form-label">Unità di misura porzioni</label>
+                                                    <select type="text" class="form-select" id="inputAddress" name="category" placeholder="Nome categoria" [(ngModel)]="recipe.portion_unit"> <!-- [(ngModel)]="ingredient.category" -->
+                                                        <option value="person">persone</option>
+                                                        <option value="gram">grammi</option>
+                                                        <option value="bakingTray">teglie</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label for="inputAddress2" class="form-label">Descrizione</label>
+                                            <textarea rows="8" type="text" class="form-control" id="inputAddress2" name="description" placeholder="Procedimento ricetta" [(ngModel)]="recipe.description"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4 input-col pe-0">
+                                    <!-- <label class="mb-2">Immagine</label> -->
+                                    <label *ngIf="!imageSrc" class="input-label rounded" for="inputGroupFile01"><span class="h-100 d-flex align-items-center justify-content-center">carica immagine</span></label>
+                                    <input type="file" class="form-control d-none" id="inputGroupFile01" (change)="onFileSelected($event)" accept=".jpg,.png">
+                                    <div class="position-relative" *ngIf="imageSrc" style="height: 410px !important;">
+                                        <img class="input-label rounded" [src]="imageSrc" alt="">
+                                        <button type="button" class="btn-close" style="position: absolute; top: 5px; right: 5px;" aria-label="Close" (click)="imageSrc = null"></button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="d-flex justify-content-end w-100 my-3">
+                            <button class="btn btn-lg btn-primary" (click)="nextStep()">Continua</button>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Aggiungi gli ingredienti">
+                    <div class="p-3 pb-0 height">
+                        <app-ingredients (ingredients)=onIngredientAdded($event)></app-ingredients>
+                        <div class="d-flex justify-content-end w-100 my-3">
+                            <button class="btn btn-lg btn-secondary me-2" (click)="saveRecipe('next')">Aggiungi cottura</button>
+                            <button class="btn btn-lg btn-primary" (click)="saveRecipe('out')">Salva ricetta e esci</button>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Esecuzione">
+                    <div class="p-3 pb-0 height">
+                        <div class="row">
+                            <form class="row g-3" id="ingredient-form" (ngSubmit)="submitForm()" method="post"> 
+                                <div class="col">
+                                    <label for="inputAddress" class="form-label">Numero porzioni</label>
+                                    <input type="number" class="form-control" id="inputAddress" name="portion_number" placeholder="numero porzioni" [(ngModel)]="execution.portion_number">        
+                                </div>
+                                <div class="col">
+                                    <label for="inputAddress" class="form-label">Unità di misura porzioni</label>
+                                    <select type="text" class="form-select" id="inputAddress" name="category" placeholder="Nome categoria" [(ngModel)]="execution.portion_unit"> <!-- [(ngModel)]="ingredient.category" -->
+                                        <option value="person">persone</option>
+                                        <option value="gram">grammi</option>
+                                        <option value="bakingTray">teglie</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" name="note" style="height: 100px" [(ngModel)]="execution.note"></textarea>
+                                        <label for="floatingTextarea2">Note cottura</label>
+                                      </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <p class="alert alert-primary" role="alert">Inserisci il file .csv generato dal software Connected Cooking del forno iCombi pro Rational</p>
+                                            <label for="csvFileUpload" class="form-label">File cottura</label>
+                                            <input class="form-control" type="file" #fileImportInput name="File Upload" id="csvFileUpload" name="file" [(ngModel)]="execution.file"  (change)="fileChangeListener($event)" accept=".csv">
+                                        </div>        
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="d-flex justify-content-end w-100 my-3">
+                            <button class="btn btn-lg btn-secondary me-2" (click)="routeTo('dashboard/home')">Esci</button>
+                            <button class="btn btn-lg btn-primary" type="submit" form="ingredient-form">Salva cottura e genera report</button>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+            <!-- <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Crea la tua ricetta</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Aggiungi ingredienti</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">Esegui</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="disabled-tab" data-bs-toggle="tab" data-bs-target="#disabled-tab-pane" type="button" role="tab" aria-controls="disabled-tab-pane" aria-selected="false" disabled>Disabled</button>
+                </li>
+            </ul> -->
+            <!-- <div class="tab-content mt-3" id="myTabContent">
+                <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+                    <div class="d-flex flex-column w-100">
+                        <h1 class="fs-1">Crea la tua ricetta</h1>
+                        <span class="text-secondary">Crea la tua lezione o selezionala dalle tue ricette</span>
+                    </div>
+                    <div class="row">
+                        <form class="row g-3">
+                            <div class="col-8">
+                                <div class="row py-0 d-flex justify-content-between flex-column gap-3">
+                                    <div class="col-12">
+                                        <label for="inputAddress" class="form-label">Titolo</label>
+                                        <input type="text" class="form-control" id="inputAddress" name="title" placeholder="Titolo ricetta" [(ngModel)]="recipe.title">
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="inputAddress2" class="form-label">Descrizione</label>
+                                        <textarea rows="10" type="text" class="form-control" id="inputAddress2" name="description" placeholder="Procedimento ricetta" [(ngModel)]="recipe.description"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4 input-col">
+                                <label class="input-label rounded" for="inputGroupFile01"><span class="h-100 d-flex align-items-center justify-content-center">carica immagine</span></label>
+                                <input type="file" class="form-control d-none" id="inputGroupFile01">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="d-flex justify-content-end w-100 my-4 pe-3">
+                        <a class="btn btn-lg btn-primary" href="javascript:void(0);" onclick="$('.nav-tabs a[href=\'#profile-tab\']').click();">Aggiungi ingredienti</a>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                    <app-ingredients></app-ingredients>
+                    <div class="d-flex justify-content-end w-100 my-4 pe-3">
+                        <button class="btn btn-lg btn-primary">Aggiungi esecuzione</button>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">...</div>
+                <div class="tab-pane fade" id="disabled-tab-pane" role="tabpanel" aria-labelledby="disabled-tab" tabindex="0">...</div>
+            </div> -->
+        </div>
+    </div>
+</div>

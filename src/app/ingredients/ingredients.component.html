@@ -1,0 +1,106 @@
+<div class="row">
+    <div class="col-8 py-1 ingredients-col py-3 d-flex flex-column border rounded pb-2" style="min-height: 400px;">
+        <div class="d-flex justify-content-between mb-3">
+            <h4 class="d-inline">Ingredienti</h4>
+            <button class="btn btn-secondary" (click)="resetFilters()">Reset</button>
+        </div>
+        <div class="border-bottom pb-3 mb-3 d-flex flex-column">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Filtra per nome" aria-label="Username" aria-describedby="basic-addon1" [(ngModel)]="filterName" (change)="filterFoods()">
+                <select class="form-select" aria-label="Default select example" [(ngModel)]="filterCategory" (change)="filterFoods()">
+                    <option value="" selected>Tutti</option>
+                    <option value="{{food}}" *ngFor="let food of foodCategories">{{food}}</option>
+                </select>
+            </div>
+<!--             <label for="customRange3" [class]="listSwitch? '' : 'barOff'">Indice di footprint</label>
+            <div class="d-flex" [class]="listSwitch? '' : 'barOff'">
+                <span class="mx-2">0</span>
+                <input type="range" class="form-range my-range" min="0" max="1000" step="1" id="customRange3" [(ngModel)]="filterEvValue" (change)="filterFoods()">
+                <span class="mx-2">100</span>
+            </div> -->
+<!--             <div class="btn-group btn-group-sm mt-3" role="group" aria-label="Basic radio toggle button group">
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked (click)="switchTrue()">
+                <label class="btn btn-outline-success" for="btnradio1">Ingredienti</label>
+                
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" (click)="switchFalse()">
+                <label class="btn btn-outline-success" for="btnradio2">Ricette</label>
+            </div> -->
+            </div>
+        <div
+        class="drop-zone-food-container position-relative flex-grow-1"
+        cdkDropList
+        #todoList="cdkDropList"
+        [cdkDropListData]="filteredAndVisibleFoods"
+        [cdkDropListConnectedTo]="[doneList]"
+        (cdkDropListDropped)="drop($event)">
+        <span class="count-results">Risultati {{filteredAndVisibleFoods.length}} elementi</span>
+            <div class="drop-zone-food px-3">
+                <div class="drag-el my-2 position-relative pb-1" *ngFor="let food of filteredAndVisibleFoods, index as i" cdkDrag>
+                    <div class="img-wrapper" >
+                        <img *ngIf="food.cover_image_name" src="{{food.cover_image_name}}" alt="{{food.name}}" class="food-img">
+                        <img *ngIf="!food.cover_image_name" src="https://www.innerintegratori.it/wp-content/uploads/2021/06/placeholder-image.png" alt="" class="food-img">
+                    </div>
+                    <span class="d-block food-name">{{ food.name }}</span>
+                    <div class="input-group">
+                        <input *ngIf="!food.ingredients" [(ngModel)]="food.weight" type="number" class="form-control ingredient-weight text-secondary">
+                    </div>
+                    <div *ngIf="!food.ingredients" class="food-plus" (click)="openPopover(i)"><i class="fa-solid fa-ellipsis text-success"></i></div>
+                    <div *ngIf="food.popover" class="food-popover rounded py-2">
+                        <span class="pt-2 px-2 fs-6 d-block">{{food.name}}</span>
+                        <small class="d-block fst-italic pb-2">Valori per 100 gr.</small>
+                        <ul class="list-group rounded-top-0">
+                            <li class="list-group-item d-flex justify-content-between flex-wrap"><span class="text-secondary fst-italic me-1">Calorie</span><span>{{food.kcal}} <i>Kcal</i></span></li>
+                            <li class="list-group-item d-flex justify-content-between flex-wrap"><span class="text-secondary fst-italic me-1">Proteine</span><span>{{food.protein}} <i>g</i></span></li>
+                            <li class="list-group-item d-flex justify-content-between flex-wrap"><span class="text-secondary fst-italic me-1">Carboidrati</span><span>{{food.carbohydrates}} <i>g</i></span></li>
+                            <li class="list-group-item d-flex justify-content-between flex-wrap"><span class="text-secondary fst-italic me-1">Grassi</span><span>{{food.fats}} <i>g</i></span></li>
+                            <li class="list-group-item d-flex justify-content-between flex-wrap"><span class="text-secondary fst-italic me-1">Zuccheri</span><span>{{food.sugar}} <i>g</i></span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-4 py-1 h-100 ingredients-col pt-3 d-flex flex-column">
+        <div class="d-flex justify-content-between">
+            <h4 class="d-inline">Ricetta</h4>
+            <div class="my-buttons d-flex justify-content-end">
+                <button [disabled]="done.length==0" class="btn btn-sm rounded btn-light z-2" (click)="resetPlate()">Svuota</button>
+            </div>
+        </div>
+        <div class="container p-0 position-relative d-flex flex-column drop-area-with-buttons-container h-100">
+            <div class="position-relative d-flex justify-content-center align-items-center">
+                <div class="drop-zone-plate rounded bg-light my-border-results mt-3"
+                cdkDropList
+                #doneList="cdkDropList"
+                [cdkDropListData]="done"
+                [cdkDropListConnectedTo]="[todoList]"
+                (cdkDropListDropped)="drop($event)"
+                >
+                    <!-- <img class="plate-img" src="../../assets/iconeplateholder.png" alt="piatto"> -->
+                    <div *ngIf="done.length == 0" class="d-flex justify-content-center align-items-center h-100 w-100 text-dark"><span>Trascina qui gli ingredienti</span></div>
+                    <div class="drag-el-plate" draggable="true" cdkDrag>
+                        <ul *ngIf="done.length > 0" class="list-group recipe rounded my-border-results">
+                            <li *ngFor="let food of done; let i = index" class="list-group-item border-0">
+                                <ul class="list-group border-bottom pb-3">
+                                    <li class="list-group-item d-flex align-content-center border-0">
+                                        <div class="img-wrapper me-3">
+                                            <img *ngIf="food.cover_image_name" src="{{food.cover_image_name}}" alt="{{food.name}}" class="food-img">
+                                            <img *ngIf="!food.cover_image_name" src="https://www.innerintegratori.it/wp-content/uploads/2021/06/placeholder-image.png" alt="" class="food-img">
+                                        </div>
+                                        <div class="w-100 d-flex align-items-center">
+                                            <span>{{food.name}}</span>
+                                        </div>
+                                        <div class="input-group">
+                                            <input [(ngModel)]="food.weight" (change)="setWeightAndScale()" type="number" class="form-control ingredient-weight text-secondary">
+                                            <button class="btn btn-danger" (click)="removeFood(food, i)"><i class="fa-solid fa-trash-can"></i></button>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>    
+            </div>
+        </div>
+    </div>
+</div>

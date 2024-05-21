@@ -1,0 +1,61 @@
+<div class="container-fluid py-5">
+    <div class="d-flex mb-3 justify-content-between">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb text-primary">
+                <li class="breadcrumb-item text-primary" style="cursor: pointer;" aria-current="page" (click)="routeTo('dashboard/home')">Dashboard</li>
+                <li class="breadcrumb-item breadcrumb-active" style="cursor: pointer;" aria-current="page">Nuova cottura</li>
+            </ol>
+        </nav>
+        <h4>{{user.username}}</h4>
+    </div>
+    <div class="row shadow pt-4 rounded">
+        <div class="col-12 d-flex flex-column justify-content-between h-100">
+            <div class="p-3 pb-0 height">
+                <div class="d-flex flex-column w-100">
+                    <h4>Inserisci i dati della nuova cottura</h4>
+                    <span class="text-secondary">Lorem ipsum dolor sit amet consectetur adipisicing elit.</span>
+                </div>
+                <div class="row">
+                    <form class="row g-3" id="ingredient-form" (ngSubmit)="submitForm()" method="post">
+                        <div class="col">
+                            <label for="inputAddress" class="form-label">Seleziona ricetta</label>
+                            <select type="text" class="form-select" id="inputAddress" name="category" placeholder="Nome categoria" [(ngModel)]="execution.recipe_id"> <!-- [(ngModel)]="ingredient.category" -->
+                                <option value="0">Scegli ricetta</option>
+                                <option *ngFor="let recipe of recipes" [value]="recipe.id">{{recipe.name}}</option>
+                            </select>
+                        </div>    
+                        <div class="col">
+                            <label for="inputAddress" class="form-label">Numero porzioni</label>
+                            <input type="number" class="form-control" id="inputAddress" name="portion_number" placeholder="numero porzioni" [(ngModel)]="execution.portion_number">        
+                        </div>
+                        <div class="col">
+                            <label for="inputAddress" class="form-label">Unità di misura porzioni</label>
+                            <select type="text" class="form-select" id="inputAddress" name="category" placeholder="Nome categoria" [(ngModel)]="execution.portion_unit"> <!-- [(ngModel)]="ingredient.category" -->
+                                <option value="person">persone</option>
+                                <option value="gram">grammi</option>
+                                <option value="bakingTray">teglie</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" name="note" style="height: 100px" [(ngModel)]="execution.note"></textarea>
+                                <label for="floatingTextarea2">Note cottura</label>
+                              </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="col">
+                                <div class="mb-3">
+                                    <label for="csvFileUpload" class="form-label">File cottura</label>
+                                    <input class="form-control" type="file" #fileImportInput name="File Upload" id="csvFileUpload" name="file" [(ngModel)]="execution.file"  (change)="fileChangeListener($event)" accept=".csv">
+                                </div>        
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="d-flex justify-content-end w-100 my-3">
+                    <button class="btn btn-lg btn-primary" type="submit" form="ingredient-form">Salva ingrediente</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

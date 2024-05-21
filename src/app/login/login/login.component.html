@@ -1,0 +1,26 @@
+<div class="d-flex justify-content-center align-items-center h-100">
+    <div class="col-8 d-flex justify-content-center">
+        <div class="card w-75 py-5 position-relative">
+            <div class="card-body mt-5">
+                <form #loginForm="ngForm" (ngSubmit)="submitLogin()">
+                    <div class="alert alert-danger my-alert" *ngIf="errorShow">
+                        <span class="text-center">{{error}}</span>
+                    </div>
+                    <div class="mb-5">
+                      <input type="email" class="form-control" id="email" name="email" [(ngModel)]="form.username" placeholder="username" required>
+                    </div>
+                    <div class="mb-5">
+                      <input type="password" class="form-control" id="password" name="password" [(ngModel)]="form.password" placeholder="password" required>
+                    </div>
+                    <!-- <div class="mb-3 form-check">
+                      <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                      <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                    </div> -->
+                    <div class="w-100 d-flex justify-content-center">
+                        <button type="submit" class="btn btn-success m-auto" [disabled]="!loginForm.valid">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
