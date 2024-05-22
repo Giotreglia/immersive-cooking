@@ -237,26 +237,24 @@ export class ShowExecutionComponent implements OnInit {
       color: rgb(0, 0, 0)
     });
 
-    const noCoverImageUrl = "../../assets/carbonara.png"
+    const noCoverImageUrl = "../../assets/no-cover.png"
     let imageToFetch = this.selectedRecipe.cover ? this.selectedRecipe.cover : noCoverImageUrl
-    if(this.selectedRecipe.cover)
-    {
-      const imageBytes = await fetch(this.selectedRecipe.cover).then(res => res.arrayBuffer());
-      const image = await pdfDoc.embedPng(imageBytes);
-      const imageWidth = 230;
-      const imageHeight = (image.height / image.width) * imageWidth;
+    const imageBytes = await fetch(imageToFetch).then(res => res.arrayBuffer());
+    const image = await pdfDoc.embedPng(imageBytes);
+    const imageWidth = 230;
+    const imageHeight = (image.height / image.width) * imageWidth;
 
-      pageHeight = pageHeight - 230
+    pageHeight = pageHeight - 230
 
-      page.drawImage(image, {
-        x: 175,
-        y: pageHeight,
-        width: imageWidth,
-        height: imageHeight,
-      });
+    page.drawImage(image, {
+      x: 175,
+      y: pageHeight,
+      width: imageWidth,
+      height: imageHeight,
+    });
 
-      pageHeight = pageHeight - 10
-    }
+    pageHeight = pageHeight - 10
+
     // Aggiungi il contenuto
     page.drawText("Descrizione ricetta", {
       x: 50,
@@ -270,7 +268,7 @@ export class ShowExecutionComponent implements OnInit {
 
     const font = await pdfDoc.embedFont('Helvetica');
 
-    pageHeight = this.drawWrappedText(this.selectedRecipe.description, 50, pageHeight, 460.28, 12, 12 * 1.2, page, font);
+    pageHeight = this.drawWrappedText(this.convertToSingleLine(this.selectedRecipe.description), 50, pageHeight, 460.28, 12, 12 * 1.2, page, font);
 
     pageHeight = pageHeight - 30
 
@@ -304,6 +302,11 @@ export class ShowExecutionComponent implements OnInit {
       pageHeight = page.getHeight() - 50
     }
 
+    //SECONDA PAGINA
+    page = pdfDoc.addPage([595.28, 841.89]);
+    pageHeight = page.getHeight()
+    pageHeight = pageHeight - 50
+
     page.drawText("Note", {
       x: 50,
       y: pageHeight,
@@ -313,17 +316,10 @@ export class ShowExecutionComponent implements OnInit {
     });
 
     pageHeight = pageHeight - 25
-    //this.selectedExecution.note
-    const noteText = `Come si taglia la torta millefoglie? Per tagliare una torta millefoglie in modo impeccabile è necessario utilizzare un coltello seghettato, meglio se di piccole dimensioni come il classico coltello da bistecca. Oltre ad essere seghettato deve anche essere ben affilato. Con il coltello infilzate la torta proprio al centro, mantenendo la lama in verticale. La lama a questo punto è quindi perpendicolare alla torta stessa. Mantenendola in questa posizione, si esegue un movimento di seghettatura sino a raggiungere l’esterno della torta.`
 
-    pageHeight = this.drawWrappedText(noteText, 50, pageHeight, 460.28, 12, 12 * 1.2, page, font);
+    pageHeight = this.drawWrappedText(this.convertToSingleLine(this.selectedExecution.note), 50, pageHeight, 460.28, 12, 12 * 1.2, page, font);
 
     pageHeight = pageHeight - 30
-
-    //SECONDA PAGINA
-    page = pdfDoc.addPage([595.28, 841.89]);
-    pageHeight = page.getHeight()
-    pageHeight = pageHeight - 50
 
     page.drawText("Ingredienti", {
       x: 50,
@@ -338,19 +334,16 @@ export class ShowExecutionComponent implements OnInit {
       const ingredientData = this.selectedRecipe.ingredients.filter((data: any) => data.id == ingredient.id_ingrediente)[0]
       pageHeight = this.selectedRecipe.recipeIngredients.indexOf(ingredient) == 0 ? pageHeight - 35 : pageHeight - 30
       imageToFetch = ingredientData.cover_image_name ? ingredientData.cover_image_name : noCoverImageUrl
-      if(ingredientData.cover_image_name)
-      {
-        const imageBytes = await fetch(ingredientData.cover_image_name).then(res => res.arrayBuffer());
-        const image = await pdfDoc.embedPng(imageBytes);
-        const imageWidth = 20;
-        const imageHeight = (image.height / image.width) * imageWidth;
-        page.drawImage(image, {
-          x: 50,
-          y: pageHeight,
-          width: imageWidth,
-          height: imageHeight,
-        });
-      }
+      const imageBytes = await fetch(imageToFetch).then(res => res.arrayBuffer());
+      const image = await pdfDoc.embedPng(imageBytes);
+      const imageWidth = 20;
+      const imageHeight = (image.height / image.width) * imageWidth;
+      page.drawImage(image, {
+        x: 50,
+        y: pageHeight,
+        width: imageWidth,
+        height: imageHeight,
+      });
 
       page.drawText(`${ingredientData.name} ${ingredient.weight} g.`, {
         x: 80,
@@ -358,9 +351,28 @@ export class ShowExecutionComponent implements OnInit {
         size: 12,
         color: rgb(0, 0, 0),
       });
+
+      if(pageHeight < 55.5)
+      {
+        page = pdfDoc.addPage([595.28, 841.89]);
+        pageHeight = page.getHeight()
+        pageHeight = pageHeight - 50
+      }
     }
 
-    pageHeight = pageHeight - 80
+    page = pdfDoc.addPage([595.28, 841.89]);
+    pageHeight = page.getHeight()
+    pageHeight = pageHeight - 50
+
+    page.drawText("Dati consumo di suolo", {
+      x: 50,
+      y: pageHeight,
+      size: 12,
+      color: rgb(0, 0, 0),
+      font: await pdfDoc.embedFont('Helvetica-Bold')
+    });
+
+    pageHeight = pageHeight - 40
 
     page.drawRectangle({
       x: 50,
@@ -447,7 +459,7 @@ export class ShowExecutionComponent implements OnInit {
       color: rgb(0, 0, 0),
     });
 
-    pageHeight = pageHeight - 50
+    pageHeight = pageHeight -50
 
     page.drawText("Dati consumo energia cottura", {
       x: 50,
@@ -560,7 +572,6 @@ export class ShowExecutionComponent implements OnInit {
 
     this.executionDetail.forEach((row: any) => {
       const strucuredData = row.split(";")
-      console.log({strucuredData})
       strucuredData.forEach((data: any) => {
         const text = data.split(" ")
         text.forEach((word: any)=>{
@@ -584,7 +595,6 @@ export class ShowExecutionComponent implements OnInit {
       });
       xPosition = 50
       pageHeight -= 40; // Spostarsi verso il basso per la prossima riga
-      console.log({pageHeight})
 
       if(pageHeight < 20)
       {
@@ -594,31 +604,6 @@ export class ShowExecutionComponent implements OnInit {
       }
     });
 
-
-
-    /*
-    // Funzione per leggere l'immagine locale
-    async function fetchImageFromFile(filePath: any) {
-      const response = await fetch(filePath);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch image from path: ${filePath}`);
-      }
-      return await response.arrayBuffer();
-    }
-
-    // Leggi l'immagine dal file locale
-    const imageBytes = await fetchImageFromFile(imagePath);
-    const image = await pdfDoc.embedJpg(imageBytes); // Usa embedPng se l'immagine è un PNG
-
-    // Ottieni le dimensioni dell'immagine e aggiungila al PDF
-    const { width, height } = image.scale(0.5); // Scala l'immagine se necessario
-    page.drawImage(image, {
-      x: 50,
-      y: page.getHeight() - 150 - height, // Posizione y dell'immagine
-      width,
-      height
-    }); */
-
     // Salva il documento PDF
     const pdfBytes = await pdfDoc.save();
 
@@ -627,23 +612,26 @@ export class ShowExecutionComponent implements OnInit {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `report-${this.selectedRecipe.name}.pdf`;
+    link.download = `report-${this.selectedRecipe.name}-${this.selectedExecution.creation_date}.pdf`;
     link.click();
   }
 
   drawWrappedText(text: any, x: any, y: any, maxWidth: any, fontSize: any, lineHeight: any, page: any, font: any) {
     const words = text.split(' ');
-    console.log({text})
     let currentLine = '';
     let currentWidth = 0;
     let currentHeight = y;
 
-    for (const word of words) {
+    for (const word of words)
+    {
       const wordWidth = font.widthOfTextAtSize(word, fontSize);
-      if (currentWidth + wordWidth < maxWidth) {
+      if (currentWidth + wordWidth < maxWidth)
+      {
         currentLine += (currentLine ? ' ' : '') + word;
         currentWidth += wordWidth;
-      } else {
+      }
+      else
+      {
         page.drawText(currentLine, { x, y: currentHeight, size: fontSize });
         currentHeight -= lineHeight;
         currentLine = word;
@@ -653,5 +641,9 @@ export class ShowExecutionComponent implements OnInit {
     page.drawText(currentLine, { x, y: currentHeight, size: fontSize });
 
     return currentHeight;
+  }
+
+  convertToSingleLine(text: string) {
+    return text.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
   }
 }
