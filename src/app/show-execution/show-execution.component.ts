@@ -222,8 +222,6 @@ export class ShowExecutionComponent implements OnInit {
 
   async openPDF() {
     this.showResults = true;
-    //../../assets/carbonara.png
-    // Crea un nuovo documento PDF
     const pdfDoc = await PDFDocument.create();
     let page = pdfDoc.addPage([595.28, 841.89]);
     let pageHeight = page.getHeight()
@@ -282,7 +280,6 @@ export class ShowExecutionComponent implements OnInit {
 
     pageHeight = pageHeight - 15
 
-    // Aggiungi il contenuto
     page.drawText("Descrizione ricetta", {
       x: 50,
       y: pageHeight,
@@ -305,7 +302,7 @@ export class ShowExecutionComponent implements OnInit {
         font: font,
         color: rgb(0, 0, 0),
       });
-      pageHeight -= 12 + 2; // Aggiungi spazio tra le righe
+      pageHeight -= 12 + 2;
       if(pageHeight < 50)
       {
         page = pdfDoc.addPage([595.28, 841.89]);
@@ -344,7 +341,7 @@ export class ShowExecutionComponent implements OnInit {
         font: font,
         color: rgb(0, 0, 0),
       });
-      pageHeight -= 12 + 2; // Aggiungi spazio tra le righe
+      pageHeight -= 12 + 2;
       if(pageHeight < 50)
       {
         page = pdfDoc.addPage([595.28, 841.89]);
@@ -638,7 +635,7 @@ export class ShowExecutionComponent implements OnInit {
         xPosition += 100;
       });
       xPosition = 50
-      pageHeight -= 40; // Spostarsi verso il basso per la prossima riga
+      pageHeight -= 40;
 
       if(pageHeight < 20)
       {
@@ -668,19 +665,6 @@ export class ShowExecutionComponent implements OnInit {
             pageHeight += (10 * (headerWords.length))
           }
           xPosition += 100;
-          /*
-          page.drawText(header, {
-            x: xPosition,
-            y: pageHeight + (10 * (header.length / 2)),
-            size: 12,
-            font: font,
-            color: rgb(0, 0, 0),
-          });
-          if(header.length > 1)
-          {
-            pageHeight -= 10
-          }
-          xPosition += 100; */
         })
       }
     });
