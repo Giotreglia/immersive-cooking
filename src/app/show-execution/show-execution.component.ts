@@ -705,14 +705,6 @@ export class ShowExecutionComponent implements OnInit {
     }
     page.drawText(currentLine, { x, y: currentHeight, size: fontSize });
 
-    /*
-    if(currentHeight < 50)
-    {
-      page = pdfDoc.addPage([595.28, 841.89]);
-      currentHeight = page.getHeight()
-      currentHeight = currentHeight - 50
-    } */
-
     return currentHeight;
   }
 
