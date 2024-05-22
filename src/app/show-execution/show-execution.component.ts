@@ -9,6 +9,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/it';
+import { PDFDocument, rgb } from 'pdf-lib';
 registerLocaleData(localeFr, 'it');
 
 @Component({
@@ -35,6 +36,8 @@ export class ShowExecutionComponent implements OnInit {
   totalWF: any;
   totalEF: any;
   showResults: boolean = false;
+  totalKw: any = 0
+  executionDetail: any = []
 
   ngOnInit(): void {
     let userStorage: any = localStorage.getItem('user');
@@ -47,6 +50,14 @@ export class ShowExecutionComponent implements OnInit {
 
   routeTo(route: any) {
     this.router.navigate([route]);
+  }
+
+  onTotalKwEventEmitted(eventData: any) {
+    this.totalKw = eventData
+  }
+
+  onExecutionDetailEventEmitted(eventData: any) {
+    this.executionDetail = eventData
   }
 
   getRecipes() {
@@ -209,17 +220,438 @@ export class ShowExecutionComponent implements OnInit {
     this.totalEF = total;
   }
 
-  public openPDF(): void {
+  async openPDF() {
     this.showResults = true;
-    let DATA: any = document.getElementById('results');
-    html2canvas(DATA).then((canvas) => {
-      let fileWidth = 210;
-      let fileHeight = (canvas.height * fileWidth) / canvas.width;
-      const FILEURI = canvas.toDataURL('image/png');
-      let PDF = new jsPDF('p', 'mm', 'a4');
-      let position = 0;
-      PDF.addImage(FILEURI, 'PNG', 0, position, fileWidth, fileHeight);
-      PDF.save('nome-ricetta.pdf');
+    //../../assets/carbonara.png
+    // Crea un nuovo documento PDF
+    const pdfDoc = await PDFDocument.create();
+    let page = pdfDoc.addPage([595.28, 841.89]);
+    let pageHeight = page.getHeight()
+
+    const portionUnit = this.selectedRecipe.portion_unit == "person" ? "Persona" : this.selectedRecipe.portion_unit == "gram" ? "grammi" : "teglie"
+    pageHeight = pageHeight - 50
+    page.drawText(`${this.selectedRecipe.name}  x ${this.selectedRecipe.portion_number} ${portionUnit}`, {
+      x: 50,
+      y: pageHeight,
+      size: 24,
+      color: rgb(0, 0, 0)
     });
+
+    const noCoverImageUrl = "../../assets/carbonara.png"
+    let imageToFetch = this.selectedRecipe.cover ? this.selectedRecipe.cover : noCoverImageUrl
+    if(this.selectedRecipe.cover)
+    {
+      const imageBytes = await fetch(this.selectedRecipe.cover).then(res => res.arrayBuffer());
+      const image = await pdfDoc.embedPng(imageBytes);
+      const imageWidth = 230;
+      const imageHeight = (image.height / image.width) * imageWidth;
+
+      pageHeight = pageHeight - 230
+
+      page.drawImage(image, {
+        x: 175,
+        y: pageHeight,
+        width: imageWidth,
+        height: imageHeight,
+      });
+
+      pageHeight = pageHeight - 10
+    }
+    // Aggiungi il contenuto
+    page.drawText("Descrizione ricetta", {
+      x: 50,
+      y: pageHeight,
+      size: 12,
+      color: rgb(0, 0, 0),
+      font: await pdfDoc.embedFont('Helvetica-Bold')
+    });
+
+    pageHeight = pageHeight - 25
+
+    const font = await pdfDoc.embedFont('Helvetica');
+
+    pageHeight = this.drawWrappedText(this.selectedRecipe.description, 50, pageHeight, 460.28, 12, 12 * 1.2, page, font);
+
+    pageHeight = pageHeight - 30
+
+    if(pageHeight < 50)
+    {
+      page = pdfDoc.addPage([595.28, 841.89]);
+      pageHeight = page.getHeight() - 50
+    }
+
+    page.drawText("Data cottura", {
+      x: 50,
+      y: pageHeight,
+      size: 12,
+      color: rgb(0, 0, 0),
+      font: await pdfDoc.embedFont('Helvetica-Bold')
+    });
+
+    pageHeight = pageHeight - 25
+
+    page.drawText(this.selectedExecution.creation_date, {
+      x: 50,
+      y: pageHeight,
+      size: 12,
+      color: rgb(0, 0, 0),
+    });
+
+    pageHeight = pageHeight - 30
+    if(pageHeight < 50)
+    {
+      page = pdfDoc.addPage([595.28, 841.89]);
+      pageHeight = page.getHeight() - 50
+    }
+
+    page.drawText("Note", {
+      x: 50,
+      y: pageHeight,
+      size: 12,
+      color: rgb(0, 0, 0),
+      font: await pdfDoc.embedFont('Helvetica-Bold')
+    });
+
+    pageHeight = pageHeight - 25
+    //this.selectedExecution.note
+    const noteText = `Come si taglia la torta millefoglie? Per tagliare una torta millefoglie in modo impeccabile è necessario utilizzare un coltello seghettato, meglio se di piccole dimensioni come il classico coltello da bistecca. Oltre ad essere seghettato deve anche essere ben affilato. Con il coltello infilzate la torta proprio al centro, mantenendo la lama in verticale. La lama a questo punto è quindi perpendicolare alla torta stessa. Mantenendola in questa posizione, si esegue un movimento di seghettatura sino a raggiungere l’esterno della torta.`
+
+    pageHeight = this.drawWrappedText(noteText, 50, pageHeight, 460.28, 12, 12 * 1.2, page, font);
+
+    pageHeight = pageHeight - 30
+
+    //SECONDA PAGINA
+    page = pdfDoc.addPage([595.28, 841.89]);
+    pageHeight = page.getHeight()
+    pageHeight = pageHeight - 50
+
+    page.drawText("Ingredienti", {
+      x: 50,
+      y: pageHeight,
+      size: 12,
+      color: rgb(0, 0, 0),
+      font: await pdfDoc.embedFont('Helvetica-Bold')
+    });
+
+    for(let ingredient of this.selectedRecipe.recipeIngredients)
+    {
+      const ingredientData = this.selectedRecipe.ingredients.filter((data: any) => data.id == ingredient.id_ingrediente)[0]
+      pageHeight = this.selectedRecipe.recipeIngredients.indexOf(ingredient) == 0 ? pageHeight - 35 : pageHeight - 30
+      imageToFetch = ingredientData.cover_image_name ? ingredientData.cover_image_name : noCoverImageUrl
+      if(ingredientData.cover_image_name)
+      {
+        const imageBytes = await fetch(ingredientData.cover_image_name).then(res => res.arrayBuffer());
+        const image = await pdfDoc.embedPng(imageBytes);
+        const imageWidth = 20;
+        const imageHeight = (image.height / image.width) * imageWidth;
+        page.drawImage(image, {
+          x: 50,
+          y: pageHeight,
+          width: imageWidth,
+          height: imageHeight,
+        });
+      }
+
+      page.drawText(`${ingredientData.name} ${ingredient.weight} g.`, {
+        x: 80,
+        y: pageHeight + 5.5,
+        size: 12,
+        color: rgb(0, 0, 0),
+      });
+    }
+
+    pageHeight = pageHeight - 80
+
+    page.drawRectangle({
+      x: 50,
+      y: pageHeight,
+      width: 160,
+      height: 20,
+      color: rgb(241 / 255, 242 / 255, 243 / 255),
+    });
+    page.drawText(`Consumo di acqua`, {
+      x: 60,
+      y: pageHeight + 5.5,
+      size: 12,
+      color: rgb(0, 0, 0),
+    });
+
+    page.drawRectangle({
+      x: 215,
+      y: pageHeight,
+      width: 160,
+      height: 20,
+      color: rgb(241 / 255, 242 / 255, 243 / 255),
+    });
+    page.drawText(`Consumo di suolo`, {
+      x: 225,
+      y: pageHeight + 5.5,
+      size: 12,
+      color: rgb(0, 0, 0),
+    });
+
+    page.drawRectangle({
+      x: 380,
+      y: pageHeight,
+      width: 160,
+      height: 20,
+      color: rgb(241 / 255, 242 / 255, 243 / 255),
+    });
+    page.drawText(`Emissioni di CO2`, {
+      x: 390,
+      y: pageHeight + 5.5,
+      size: 12,
+      color: rgb(0, 0, 0),
+    });
+
+    pageHeight = pageHeight - 50
+    page.drawRectangle({
+      x: 50,
+      y: pageHeight,
+      width: 160,
+      height: 50,
+      color: rgb(248 / 255, 249 / 255, 250 / 255),
+    });
+    page.drawText(`${parseFloat((this.totalWF / 1000).toFixed(3))} litri`, {
+      x: 80,
+      y: pageHeight + 18,
+      size: 25,
+      color: rgb(0, 0, 0),
+    });
+
+    page.drawRectangle({
+      x: 215,
+      y: pageHeight,
+      width: 160,
+      height: 50,
+      color: rgb(248 / 255, 249 / 255, 250 / 255),
+    });
+    page.drawText(`${parseFloat((this.totalEF).toFixed(3))} mq`, {
+      x: 242.5,
+      y: pageHeight + 18,
+      size: 25,
+      color: rgb(0, 0, 0),
+    });
+
+    page.drawRectangle({
+      x: 380,
+      y: pageHeight,
+      width: 160,
+      height: 50,
+      color: rgb(248 / 255, 249 / 255, 250 / 255),
+    });
+    page.drawText(`${parseFloat((this.totalCF).toFixed(3))} Kg`, {
+      x: 415,
+      y: pageHeight + 18,
+      size: 25,
+      color: rgb(0, 0, 0),
+    });
+
+    pageHeight = pageHeight - 50
+
+    page.drawText("Dati consumo energia cottura", {
+      x: 50,
+      y: pageHeight,
+      size: 12,
+      color: rgb(0, 0, 0),
+      font: await pdfDoc.embedFont('Helvetica-Bold')
+    });
+
+    pageHeight = pageHeight - 25
+
+    const text = `Per produrre un kWh elettrico vengono bruciati mediamente l'equivalente di 2,56 kWh sotto forma di combustibili fossili e di conseguenza emessi nell'aria circa 0,65 kg di anidride carbonica`
+    pageHeight = this.drawWrappedText(text, 50, pageHeight, 460.28, 12, 12 * 1.2, page, font);
+
+    pageHeight = pageHeight - 50
+
+    page.drawRectangle({
+      x: 50,
+      y: pageHeight,
+      width: 160,
+      height: 20,
+      color: rgb(241 / 255, 242 / 255, 243 / 255),
+    });
+    page.drawText(`Consumo totale in Kw`, {
+      x: 60,
+      y: pageHeight + 5.5,
+      size: 12,
+      color: rgb(0, 0, 0),
+    });
+
+    page.drawRectangle({
+      x: 215,
+      y: pageHeight,
+      width: 160,
+      height: 20,
+      color: rgb(241 / 255, 242 / 255, 243 / 255),
+    });
+    page.drawText(`CO2 x Kw (media italiana)`, {
+      x: 225,
+      y: pageHeight + 5.5,
+      size: 12,
+      color: rgb(0, 0, 0),
+    });
+
+    page.drawRectangle({
+      x: 380,
+      y: pageHeight,
+      width: 160,
+      height: 20,
+      color: rgb(241 / 255, 242 / 255, 243 / 255),
+    });
+    page.drawText(`Emissioni CO2 cottura`, {
+      x: 390,
+      y: pageHeight + 5.5,
+      size: 12,
+      color: rgb(0, 0, 0),
+    });
+
+    pageHeight = pageHeight - 50
+
+    page.drawRectangle({
+      x: 50,
+      y: pageHeight,
+      width: 160,
+      height: 50,
+      color: rgb(248 / 255, 249 / 255, 250 / 255),
+    });
+    page.drawText(`${parseFloat((this.totalKw).toFixed(3))} Kw`, {
+      x: 90,
+      y: pageHeight + 18,
+      size: 25,
+      color: rgb(0, 0, 0),
+    });
+
+    page.drawRectangle({
+      x: 215,
+      y: pageHeight,
+      width: 160,
+      height: 50,
+      color: rgb(248 / 255, 249 / 255, 250 / 255),
+    });
+    page.drawText(`0.65 kg/kw`, {
+      x: 234,
+      y: pageHeight + 18,
+      size: 25,
+      color: rgb(0, 0, 0),
+    });
+
+    page.drawRectangle({
+      x: 380,
+      y: pageHeight,
+      width: 160,
+      height: 50,
+      color: rgb(248 / 255, 249 / 255, 250 / 255),
+    });
+    page.drawText(`${parseFloat((this.totalKw * 0.65).toFixed(3))} Kg co2`, {
+      x: 392.7,
+      y: pageHeight + 18,
+      size: 25,
+      color: rgb(0, 0, 0),
+    });
+
+    pageHeight = pageHeight - 50
+
+    page = pdfDoc.addPage([841.89, 595.28]);
+    pageHeight = page.getHeight()
+    pageHeight = pageHeight - 50
+
+    let xPosition = 50;
+
+    this.executionDetail.forEach((row: any) => {
+      const strucuredData = row.split(";")
+      console.log({strucuredData})
+      strucuredData.forEach((data: any) => {
+        const text = data.split(" ")
+        text.forEach((word: any)=>{
+          page.drawText(word, {
+            x: xPosition,
+            y: pageHeight + (10 * (text.length / 2)),
+            size: 12,
+            font: font,
+            color: rgb(0, 0, 0),
+          });
+          if(text.length > 1)
+          {
+            pageHeight -= 10
+          }
+        })
+        if(text.length > 1)
+        {
+          pageHeight += (10 * (text.length))
+        }
+        xPosition += 100;
+      });
+      xPosition = 50
+      pageHeight -= 40; // Spostarsi verso il basso per la prossima riga
+      console.log({pageHeight})
+
+      if(pageHeight < 20)
+      {
+        page = pdfDoc.addPage([841.89, 595.28]);
+        pageHeight = page.getHeight()
+        pageHeight = pageHeight - 50
+      }
+    });
+
+
+
+    /*
+    // Funzione per leggere l'immagine locale
+    async function fetchImageFromFile(filePath: any) {
+      const response = await fetch(filePath);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image from path: ${filePath}`);
+      }
+      return await response.arrayBuffer();
+    }
+
+    // Leggi l'immagine dal file locale
+    const imageBytes = await fetchImageFromFile(imagePath);
+    const image = await pdfDoc.embedJpg(imageBytes); // Usa embedPng se l'immagine è un PNG
+
+    // Ottieni le dimensioni dell'immagine e aggiungila al PDF
+    const { width, height } = image.scale(0.5); // Scala l'immagine se necessario
+    page.drawImage(image, {
+      x: 50,
+      y: page.getHeight() - 150 - height, // Posizione y dell'immagine
+      width,
+      height
+    }); */
+
+    // Salva il documento PDF
+    const pdfBytes = await pdfDoc.save();
+
+    // Scarica il PDF
+    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `report-${this.selectedRecipe.name}.pdf`;
+    link.click();
+  }
+
+  drawWrappedText(text: any, x: any, y: any, maxWidth: any, fontSize: any, lineHeight: any, page: any, font: any) {
+    const words = text.split(' ');
+    console.log({text})
+    let currentLine = '';
+    let currentWidth = 0;
+    let currentHeight = y;
+
+    for (const word of words) {
+      const wordWidth = font.widthOfTextAtSize(word, fontSize);
+      if (currentWidth + wordWidth < maxWidth) {
+        currentLine += (currentLine ? ' ' : '') + word;
+        currentWidth += wordWidth;
+      } else {
+        page.drawText(currentLine, { x, y: currentHeight, size: fontSize });
+        currentHeight -= lineHeight;
+        currentLine = word;
+        currentWidth = wordWidth;
+      }
+    }
+    page.drawText(currentLine, { x, y: currentHeight, size: fontSize });
+
+    return currentHeight;
   }
 }

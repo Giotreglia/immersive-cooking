@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { BackendService } from '../services/backend.service';
 import { Location } from '@angular/common';
@@ -10,9 +10,11 @@ import { Location } from '@angular/common';
   styleUrl: './results.component.scss'
 })
 export class ResultsComponent implements OnInit{
-  
+
   constructor(private http: HttpClient, private router: Router, private location: Location, private backend: BackendService) {}
   @Input() selectedExecutionId: any;
+  @Output() totalKwUsed = new EventEmitter<any>();
+  @Output() executionDetail = new EventEmitter<any>();
 
   user: any;
   results: any;
@@ -27,6 +29,8 @@ export class ResultsComponent implements OnInit{
     let resultsStorage: any = localStorage.getItem('results'+this.selectedExecutionId);
     console.log(resultsStorage)
     this.results = resultsStorage.split(",");
+    this.executionDetail.emit(this.results)
+    console.log("this.results: ",this.results[0])
     for (let i = 0; i < this.results.length; i++) {
       if (i == 0) {
         this.tableHead = this.results[i].split(";");
@@ -36,6 +40,7 @@ export class ResultsComponent implements OnInit{
     }
     console.log(this.tableHead);
     this.getTotalKw();
+    this.totalKwUsed.emit(this.totalKw);
   }
 
   getTotalKw() {
