@@ -227,24 +227,51 @@ export class ShowExecutionComponent implements OnInit {
     const pdfDoc = await PDFDocument.create();
     let page = pdfDoc.addPage([595.28, 841.89]);
     let pageHeight = page.getHeight()
+    let font = await pdfDoc.embedFont('Helvetica-Bold');
+    const noCoverImageUrl = "../../assets/no-cover.png"
 
-    const portionUnit = this.selectedRecipe.portion_unit == "person" ? "Persona" : this.selectedRecipe.portion_unit == "gram" ? "grammi" : "teglie"
+    const portionUnit = this.selectedRecipe.portion_unit == "person" ? this.selectedRecipe.portion_number > 1 ? "Persone" : "Persona" : this.selectedRecipe.portion_unit == "gram" ? this.selectedRecipe.portion_number > 1 ? "grammi" : "grammo" : this.selectedRecipe.portion_number > 1 ? "teglie" : "teglia"
+
     pageHeight = pageHeight - 50
-    page.drawText(`${this.selectedRecipe.name}  x ${this.selectedRecipe.portion_number} ${portionUnit}`, {
+    pageHeight = this.drawWrappedText(this.selectedRecipe.name.toLowerCase(), 50, pageHeight, 460.28, 24, 24 * 1.2, page, font, pdfDoc);
+
+    pageHeight = pageHeight - 55
+
+    page.drawText("Data cottura", {
       x: 50,
       y: pageHeight,
-      size: 24,
-      color: rgb(0, 0, 0)
+      size: 12,
+      color: rgb(0, 0, 0),
+      font: await pdfDoc.embedFont('Helvetica-Bold')
     });
 
-    const noCoverImageUrl = "../../assets/no-cover.png"
+    pageHeight = pageHeight - 20
+
+    page.drawText(this.selectedExecution.creation_date, {
+      x: 50,
+      y: pageHeight,
+      size: 12,
+      color: rgb(0, 0, 0),
+    });
+
+    pageHeight = pageHeight + 10
+
+    page.drawText(`x ${this.selectedRecipe.portion_number} ${portionUnit}`, {
+      x: 595.28 - 120,
+      y: pageHeight,
+      size: 18,
+      color: rgb(0, 0, 0),
+    });
+
+    pageHeight = pageHeight - 10
+
     let imageToFetch = this.selectedRecipe.cover ? this.selectedRecipe.cover : noCoverImageUrl
     const imageBytes = await fetch(imageToFetch).then(res => res.arrayBuffer());
     const image = await pdfDoc.embedPng(imageBytes);
     const imageWidth = 230;
     const imageHeight = (image.height / image.width) * imageWidth;
 
-    pageHeight = pageHeight - 230
+    pageHeight = pageHeight - 220
 
     page.drawImage(image, {
       x: 175,
@@ -253,7 +280,7 @@ export class ShowExecutionComponent implements OnInit {
       height: imageHeight,
     });
 
-    pageHeight = pageHeight - 10
+    pageHeight = pageHeight - 15
 
     // Aggiungi il contenuto
     page.drawText("Descrizione ricetta", {
@@ -266,46 +293,34 @@ export class ShowExecutionComponent implements OnInit {
 
     pageHeight = pageHeight - 25
 
-    const font = await pdfDoc.embedFont('Helvetica');
+    this.selectedRecipe.description = this.convertToSingleLine(this.selectedRecipe.description)
 
-    pageHeight = this.drawWrappedText(this.convertToSingleLine(this.selectedRecipe.description), 50, pageHeight, 460.28, 12, 12 * 1.2, page, font);
-
-    pageHeight = pageHeight - 30
-
-    if(pageHeight < 50)
-    {
-      page = pdfDoc.addPage([595.28, 841.89]);
-      pageHeight = page.getHeight() - 50
-    }
-
-    page.drawText("Data cottura", {
-      x: 50,
-      y: pageHeight,
-      size: 12,
-      color: rgb(0, 0, 0),
-      font: await pdfDoc.embedFont('Helvetica-Bold')
+    let lines = this.splitTextToLines(this.selectedRecipe.description, 545.28, font, 12);
+    font = await pdfDoc.embedFont('Helvetica')
+    lines.forEach(line => {
+      page.drawText(line, {
+        x: 50,
+        y: pageHeight,
+        size: 12,
+        font: font,
+        color: rgb(0, 0, 0),
+      });
+      pageHeight -= 12 + 2; // Aggiungi spazio tra le righe
+      if(pageHeight < 50)
+      {
+        page = pdfDoc.addPage([595.28, 841.89]);
+        pageHeight = page.getHeight() - 50
+      }
     });
 
     pageHeight = pageHeight - 25
 
-    page.drawText(this.selectedExecution.creation_date, {
-      x: 50,
-      y: pageHeight,
-      size: 12,
-      color: rgb(0, 0, 0),
-    });
-
-    pageHeight = pageHeight - 30
     if(pageHeight < 50)
     {
       page = pdfDoc.addPage([595.28, 841.89]);
       pageHeight = page.getHeight() - 50
+      pageHeight = pageHeight - 50
     }
-
-    //SECONDA PAGINA
-    page = pdfDoc.addPage([595.28, 841.89]);
-    pageHeight = page.getHeight()
-    pageHeight = pageHeight - 50
 
     page.drawText("Note", {
       x: 50,
@@ -317,9 +332,29 @@ export class ShowExecutionComponent implements OnInit {
 
     pageHeight = pageHeight - 25
 
-    pageHeight = this.drawWrappedText(this.convertToSingleLine(this.selectedExecution.note), 50, pageHeight, 460.28, 12, 12 * 1.2, page, font);
+    this.selectedExecution.note = this.convertToSingleLine(this.selectedExecution.note)
 
-    pageHeight = pageHeight - 30
+    lines = this.splitTextToLines(this.selectedExecution.note, 545.28, font, 12);
+    font = await pdfDoc.embedFont('Helvetica')
+    lines.forEach(line => {
+      page.drawText(line, {
+        x: 50,
+        y: pageHeight,
+        size: 12,
+        font: font,
+        color: rgb(0, 0, 0),
+      });
+      pageHeight -= 12 + 2; // Aggiungi spazio tra le righe
+      if(pageHeight < 50)
+      {
+        page = pdfDoc.addPage([595.28, 841.89]);
+        pageHeight = page.getHeight() - 50
+      }
+    });
+
+    page = pdfDoc.addPage([595.28, 841.89]);
+    pageHeight = page.getHeight()
+    pageHeight = pageHeight - 50
 
     page.drawText("Ingredienti", {
       x: 50,
@@ -336,18 +371,18 @@ export class ShowExecutionComponent implements OnInit {
       imageToFetch = ingredientData.cover_image_name ? ingredientData.cover_image_name : noCoverImageUrl
       const imageBytes = await fetch(imageToFetch).then(res => res.arrayBuffer());
       const image = await pdfDoc.embedPng(imageBytes);
-      const imageWidth = 20;
+      const imageWidth = ingredientData.cover_image_name ? 20 : 40;
       const imageHeight = (image.height / image.width) * imageWidth;
       page.drawImage(image, {
-        x: 50,
-        y: pageHeight,
+        x: ingredientData.cover_image_name ? 50 : 40,
+        y: ingredientData.cover_image_name ? pageHeight : pageHeight - 10,
         width: imageWidth,
         height: imageHeight,
       });
 
       page.drawText(`${ingredientData.name} ${ingredient.weight} g.`, {
-        x: 80,
-        y: pageHeight + 5.5,
+        x: ingredientData.cover_image_name ? 80 : 82,
+        y: ingredientData.cover_image_name ? pageHeight + 6 : pageHeight + 7.5,
         size: 12,
         color: rgb(0, 0, 0),
       });
@@ -472,7 +507,7 @@ export class ShowExecutionComponent implements OnInit {
     pageHeight = pageHeight - 25
 
     const text = `Per produrre un kWh elettrico vengono bruciati mediamente l'equivalente di 2,56 kWh sotto forma di combustibili fossili e di conseguenza emessi nell'aria circa 0,65 kg di anidride carbonica`
-    pageHeight = this.drawWrappedText(text, 50, pageHeight, 460.28, 12, 12 * 1.2, page, font);
+    pageHeight = this.drawWrappedText(text, 50, pageHeight, 460.28, 12, 12 * 1.2, page, font,pdfDoc);
 
     pageHeight = pageHeight - 50
 
@@ -567,8 +602,17 @@ export class ShowExecutionComponent implements OnInit {
     page = pdfDoc.addPage([841.89, 595.28]);
     pageHeight = page.getHeight()
     pageHeight = pageHeight - 50
-
     let xPosition = 50;
+
+    page.drawText("Tabella cottura", {
+      x: 50,
+      y: pageHeight,
+      size: 12,
+      color: rgb(0, 0, 0),
+      font: await pdfDoc.embedFont('Helvetica-Bold')
+    });
+
+    pageHeight = pageHeight - 40
 
     this.executionDetail.forEach((row: any) => {
       const strucuredData = row.split(";")
@@ -601,6 +645,43 @@ export class ShowExecutionComponent implements OnInit {
         page = pdfDoc.addPage([841.89, 595.28]);
         pageHeight = page.getHeight()
         pageHeight = pageHeight - 50
+
+        this.executionDetail[0].split(";").forEach((header: any) => {
+          console.log({header})
+          const headerWords = header.split(" ")
+
+          headerWords.forEach((word: any)=>{
+            page.drawText(word, {
+              x: xPosition,
+              y: pageHeight + (10 * (headerWords.length / 2)),
+              size: 12,
+              font: font,
+              color: rgb(0, 0, 0),
+            });
+            if(text.length > 1)
+            {
+              pageHeight -= 10
+            }
+          })
+          if(text.length > 1)
+          {
+            pageHeight += (10 * (headerWords.length))
+          }
+          xPosition += 100;
+          /*
+          page.drawText(header, {
+            x: xPosition,
+            y: pageHeight + (10 * (header.length / 2)),
+            size: 12,
+            font: font,
+            color: rgb(0, 0, 0),
+          });
+          if(header.length > 1)
+          {
+            pageHeight -= 10
+          }
+          xPosition += 100; */
+        })
       }
     });
 
@@ -612,11 +693,11 @@ export class ShowExecutionComponent implements OnInit {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `report-${this.selectedRecipe.name}-${this.selectedExecution.creation_date}.pdf`;
+    link.download = `report-${this.selectedRecipe.name.toLowerCase()}-${this.selectedExecution.creation_date}.pdf`;
     link.click();
   }
 
-  drawWrappedText(text: any, x: any, y: any, maxWidth: any, fontSize: any, lineHeight: any, page: any, font: any) {
+  drawWrappedText(text: any, x: any, y: any, maxWidth: any, fontSize: any, lineHeight: any, page: any, font: any, pdfDoc: any) {
     const words = text.split(' ');
     let currentLine = '';
     let currentWidth = 0;
@@ -640,10 +721,39 @@ export class ShowExecutionComponent implements OnInit {
     }
     page.drawText(currentLine, { x, y: currentHeight, size: fontSize });
 
+    /*
+    if(currentHeight < 50)
+    {
+      page = pdfDoc.addPage([595.28, 841.89]);
+      currentHeight = page.getHeight()
+      currentHeight = currentHeight - 50
+    } */
+
     return currentHeight;
   }
 
   convertToSingleLine(text: string) {
-    return text.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+    return text.replace(/\r?\n/g, '\\n');
+  }
+
+  splitTextToLines(text: any, maxWidth: any, font: any, fontSize: any) {
+    const lines: any[] = [];
+    const paragraphs = text.split('\\n');
+    paragraphs.forEach((paragraph: any) => {
+      let line = '';
+      const words = paragraph.split(' ');
+      words.forEach((word: any) => {
+        const testLine = line + word + ' ';
+        const testWidth = font.widthOfTextAtSize(testLine, fontSize);
+        if (testWidth > maxWidth && line !== '') {
+          lines.push(line);
+          line = word + ' ';
+        } else {
+          line = testLine;
+        }
+      });
+      lines.push(line.trim());
+    });
+    return lines;
   }
 }
