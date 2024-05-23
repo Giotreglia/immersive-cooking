@@ -1,0 +1,11 @@
+.card {
+    cursor: pointer;
+    height: 12rem;
+}
+
+.card-title {
+    max-width: 18rem;
+    text-wrap: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}

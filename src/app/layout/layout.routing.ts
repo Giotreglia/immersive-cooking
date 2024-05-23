@@ -12,6 +12,7 @@ import { ExecutionsComponent } from "../executions/executions.component";
 import { NewExecutionComponent } from "../new-execution/new-execution.component";
 import { ShowExecutionComponent } from "../show-execution/show-execution.component";
 import { ResultsComponent } from "../results/results.component";
+import { RecipeDocumentsComponent } from "../recipe-documents/recipe-documents.component";
 
 export const LayoutRoutes: Routes = [
   {
@@ -49,6 +50,9 @@ export const LayoutRoutes: Routes = [
       },
       {
         path: 'report/:executionId', component: ResultsComponent
+      },
+      {
+        path: 'recipe-documents/:recipeId', component: RecipeDocumentsComponent
       }
     ]
   }

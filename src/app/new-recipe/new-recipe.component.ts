@@ -92,9 +92,24 @@ export class NewRecipeComponent implements OnInit {
   imageSrc: any;
   onFileSelected(event: any) {
     const file: File = event.target.files[0];
+    
     // Puoi gestire il file selezionato qui
     console.log('File selezionato:', file);
     if (file) {
+      let basepath = 'recipe/';
+      let thumbFilename =  'cover_image-' + file.name.split(" ").join("");
+      console.log(thumbFilename);
+      this.backend.getpresigneduploadurl(basepath, thumbFilename, file.type).subscribe(
+        response => {
+          console.log(response)
+          let requestUrl = response.body;
+          this.recipeData.append('cover', thumbFilename);
+          this.backend.s3Upload(requestUrl, file, file.type).subscribe(
+            response => {
+              console.log(response.url);
+            })
+        }
+      )
       if (event.target.files && event.target.files[0]) {
         const reader = new FileReader();
         reader.onload = (e: any) => {
@@ -126,6 +141,7 @@ export class NewRecipeComponent implements OnInit {
 
   saveRecipe(next: any) {
     // Aggiungi i valori al FormData
+
 
     this.recipeData.append('id_user', this.user.id);
     this.recipeData.append('id_organization', this.user.id_organization);
@@ -219,6 +235,8 @@ export class NewRecipeComponent implements OnInit {
     executionForm.append('portion_number', this.execution.portion_number);
     executionForm.append('portion_unit', this.execution.portion_unit);
     executionForm.append('note', this.execution.note);
+    executionForm.append('csv_name', this.csvRecords);
+
     this.backend.addExecution(executionForm).subscribe((resp) => {
       console.log(resp);
       localStorage.setItem('results'+resp.id, this.csvRecords);

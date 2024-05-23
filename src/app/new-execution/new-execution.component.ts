@@ -88,6 +88,7 @@ export class NewExecutionComponent implements OnInit {
     executionForm.append('portion_number', this.execution.portion_number);
     executionForm.append('portion_unit', this.execution.portion_unit);
     executionForm.append('note', this.execution.note);
+    executionForm.append('csv_name', this.csvRecords);
     this.backend.addExecution(executionForm).subscribe((resp) => {
       console.log(resp);
       localStorage.setItem('results'+resp.id, this.csvRecords);

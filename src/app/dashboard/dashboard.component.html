@@ -37,7 +37,7 @@
                         <tr class="fw-bold">
                             <th scope="col">Id</th>
                             <th scope="col">Thumb</th>
-                            <th scope="col">Nome</th>
+                            <th scope="col" class="title">Nome</th>
                             <th scope="col">Azioni</th>
                         </tr>
                     </thead>
@@ -51,7 +51,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td>{{ recipe.name }}</td>
+                        <td><p class="title m-0">{{ recipe.name }}</p></td>
                         <td>
                             <div class="d-flex justify-content-center gap-2">
                                 <button class="btn btn-sm btn-icon btn-secondary" [routerLink]="['/dashboard/ricetta', recipe.id]">
@@ -81,7 +81,7 @@
                                     </div>
                                     </div>
                                 </div>
-                                <button class="btn btn-sm btn-icon btn-warning">
+                                <button class="btn btn-sm btn-icon btn-warning" [routerLink]="['/dashboard/recipe-documents', recipe.id]">
                                     <i class="fas fa-folder text-light"></i>
                                 </button>
                             </div>
