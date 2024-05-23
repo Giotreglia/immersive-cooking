@@ -8,3 +8,10 @@ th, td {
     vertical-align: middle;
     text-align: center;
 }
+
+.note, .title {
+    max-width: 100%;
+    text-wrap: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}

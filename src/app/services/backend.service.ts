@@ -11,6 +11,7 @@ export class BackendService {
 
   API_URL = 'https://dev.xredulab.com/xrplatform/web/index.php?r=smartcooking';
   LOGIN_URL = 'https://dev.xredulab.com/xrplatform/web/index.php?r=user/login';
+  MAIN_API_BASE_URL = this.API_URL + 'main/';
   sessione_max_time = 7200; // 2 hours - in seconds
   sessione_interval = 60;
 
@@ -80,6 +81,18 @@ export class BackendService {
 
   deleteExecution(executionId: any) {
     return this.http.delete<any>(`${this.API_URL}/deleteexecution&executionId=${executionId}`, {withCredentials: true})
+  }
+
+  getpresigneduploadurl(filepath: any, type: any, toresize?: any){
+    let url = this.API_URL + "/getpresigneduploadurl&filepath="+filepath+"&contentType="+type;
+    if (toresize){
+      url += '&temp=true';
+    }
+    return this.http.get(url, { observe: 'response' });//, withCredentials: true
+  }
+
+  s3Upload(requestUrl: any, file: any, type: any){
+    return this.http.put<any>(requestUrl, file, {headers:{'Content-type': type }, observe: 'response'}); //, withCredentials: true
   }
 
 }

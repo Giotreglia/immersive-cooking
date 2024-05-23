@@ -55,7 +55,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td>{{ execution.recipe.name }}</td>
+                        <td><p class="title m-0">{{ execution.recipe.name }}</p></td>
                         <!-- <td>{{ execution.user }}</td> -->
                         <td>
                             <span *ngIf="execution.portion_unit == 'person'">{{execution.portion_number}} persone</span>
@@ -63,14 +63,14 @@
                             <span *ngIf="execution.portion_unit == 'bakingTray'">{{execution.portion_number}} teglie</span>
 
                         </td>
-                        <td>{{ execution.note }}</td>
+                        <td><p class="note m-0">{{ execution.note }}</p></td>
                         <td>{{ execution.creation_date | date : 'short' }}</td>
                         <td>
                             <div class="d-flex justify-content-center gap-2">
                                 <button class="btn btn-sm btn-icon btn-secondary" [routerLink]="['/dashboard/esecuzione', execution.id]">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <button class="btn btn-sm btn-icon btn-primary" [routerLink]="['/dashboard/modifica-esecutione', execution.id]">
+                                <button class="btn btn-sm btn-icon btn-primary" [routerLink]="['/dashboard/modifica-esecuzione', execution.id]">
                                   <i class="fas fa-edit"></i>
                                 </button>
                                 <button class="btn btn-sm btn-icon btn-danger" data-bs-toggle="modal" (click)="execution.showModal = !execution.showModal">
