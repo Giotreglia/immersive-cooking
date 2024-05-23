@@ -610,47 +610,16 @@ export class ShowExecutionComponent implements OnInit {
     });
 
     pageHeight = pageHeight - 40
-
-    this.executionDetail.forEach((row: any) => {
-      const strucuredData = row.split(";")
-      strucuredData.forEach((data: any) => {
-        const text = data.split(" ")
-        text.forEach((word: any)=>{
-          page.drawText(word, {
-            x: xPosition,
-            y: pageHeight + (10 * (text.length / 2)),
-            size: 12,
-            font: font,
-            color: rgb(0, 0, 0),
-          });
-          if(text.length > 1)
-          {
-            pageHeight -= 10
-          }
-        })
-        if(text.length > 1)
-        {
-          pageHeight += (10 * (text.length))
-        }
-        xPosition += 100;
-      });
-      xPosition = 50
-      pageHeight -= 40;
-
-      if(pageHeight < 20)
-      {
-        page = pdfDoc.addPage([841.89, 595.28]);
-        pageHeight = page.getHeight()
-        pageHeight = pageHeight - 50
-
-        this.executionDetail[0].split(";").forEach((header: any) => {
-          console.log({header})
-          const headerWords = header.split(" ")
-
-          headerWords.forEach((word: any)=>{
+    if(this.executionDetail)
+    {
+      this.executionDetail.forEach((row: any) => {
+        const strucuredData = row.split(";")
+        strucuredData.forEach((data: any) => {
+          const text = data.split(" ")
+          text.forEach((word: any)=>{
             page.drawText(word, {
               x: xPosition,
-              y: pageHeight + (10 * (headerWords.length / 2)),
+              y: pageHeight + (10 * (text.length / 2)),
               size: 12,
               font: font,
               color: rgb(0, 0, 0),
@@ -662,12 +631,45 @@ export class ShowExecutionComponent implements OnInit {
           })
           if(text.length > 1)
           {
-            pageHeight += (10 * (headerWords.length))
+            pageHeight += (10 * (text.length))
           }
           xPosition += 100;
-        })
-      }
-    });
+        });
+        xPosition = 50
+        pageHeight -= 40;
+
+        if(pageHeight < 20)
+        {
+          page = pdfDoc.addPage([841.89, 595.28]);
+          pageHeight = page.getHeight()
+          pageHeight = pageHeight - 50
+
+          this.executionDetail[0].split(";").forEach((header: any) => {
+            console.log({header})
+            const headerWords = header.split(" ")
+
+            headerWords.forEach((word: any)=>{
+              page.drawText(word, {
+                x: xPosition,
+                y: pageHeight + (10 * (headerWords.length / 2)),
+                size: 12,
+                font: font,
+                color: rgb(0, 0, 0),
+              });
+              if(text.length > 1)
+              {
+                pageHeight -= 10
+              }
+            })
+            if(text.length > 1)
+            {
+              pageHeight += (10 * (headerWords.length))
+            }
+            xPosition += 100;
+          })
+        }
+      });
+    }
 
     // Salva il documento PDF
     const pdfBytes = await pdfDoc.save();
