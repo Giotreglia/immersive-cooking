@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { BackendService } from '../services/backend.service';
 import { Location } from '@angular/common';
@@ -10,9 +10,11 @@ import { Location } from '@angular/common';
   styleUrl: './results.component.scss'
 })
 export class ResultsComponent implements OnInit{
-  
+
   constructor(private http: HttpClient, private router: Router, private location: Location, private backend: BackendService) {}
   @Input() selectedExecutionId: any;
+  @Output() totalKwUsed = new EventEmitter<any>();
+  @Output() executionDetail = new EventEmitter<any>();
 
   user: any;
   results: any;
@@ -25,10 +27,10 @@ export class ResultsComponent implements OnInit{
   ngOnInit(): void {
     let userStorage: any = localStorage.getItem('user');
     this.user = JSON.parse(userStorage);
-    console.log(this.selectedExecutionId);
     this.getExecutions();
-/*     let resultsStorage: any = localStorage.getItem('results'+this.selectedExecutionId);
-    console.log(resultsStorage) */
+    this.executionDetail.emit(this.results)
+    this.getTotalKw();
+    this.totalKwUsed.emit(this.totalKw);
   }
 
   getTotalKw() {
