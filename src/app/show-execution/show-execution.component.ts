@@ -349,10 +349,6 @@ export class ShowExecutionComponent implements OnInit {
       }
     });
 
-    page = pdfDoc.addPage([595.28, 841.89]);
-    pageHeight = page.getHeight()
-    pageHeight = pageHeight - 50
-
     page.drawText("Ingredienti", {
       x: 50,
       y: pageHeight,
