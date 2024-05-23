@@ -28,15 +28,14 @@ export class ResultsComponent implements OnInit{
     let userStorage: any = localStorage.getItem('user');
     this.user = JSON.parse(userStorage);
     this.getExecutions();
-    this.executionDetail.emit(this.results)
     this.getTotalKw();
-    this.totalKwUsed.emit(this.totalKw);
   }
 
   getTotalKw() {
     for (let i = 0; i < this.tableBody.length; i++) {
       const element = this.tableBody[i];
       this.totalKw += parseFloat(element[10]);
+      this.totalKwUsed.emit(this.totalKw);
       console.log(parseFloat(element[10]))
       console.log(this.totalKw)
     }
@@ -53,19 +52,23 @@ export class ResultsComponent implements OnInit{
   getSelectedExecution(id: any) {
     console.log(id)
     this.selectedExecution = this.executions.find((execution: { id: any; }) => execution.id == id);
-    console.log(this.selectedExecution)
+    console.log("this.selectedExecution in getSelectedExecution: ",this.selectedExecution)
     if (this.selectedExecution) {
-      this.results = this.selectedExecution.csv_name.split(",");
-      console.log(this.results)
-      for (let i = 0; i < this.results.length; i++) {
-        if (i == 0) {
-          this.tableHead = this.results[i].split(";");
-          console.log(this.tableHead);
-        } else {
-          this.tableBody.push(this.results[i].split(";"));
+      if(this.selectedExecution.csv_name)
+      {
+        this.results = this.selectedExecution.csv_name.split(",");
+        this.executionDetail.emit(this.results)
+        console.log("this.results in selectedExecution: ",this.results)
+        for (let i = 0; i < this.results.length; i++) {
+          if (i == 0) {
+            this.tableHead = this.results[i].split(";");
+            console.log(this.tableHead);
+          } else {
+            this.tableBody.push(this.results[i].split(";"));
+          }
         }
+        console.log(this.tableHead);
       }
-      console.log(this.tableHead);
     }
     this.getTotalKw();
   }
