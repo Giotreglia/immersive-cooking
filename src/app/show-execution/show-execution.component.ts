@@ -263,7 +263,7 @@ export class ShowExecutionComponent implements OnInit {
 
     pageHeight = pageHeight - 10
 
-    let imageToFetch = this.selectedRecipe.cover ? this.selectedRecipe.cover : noCoverImageUrl
+    let imageToFetch = this.selectedRecipe.cover ? this.selectedRecipe.s3filename : noCoverImageUrl
     const imageBytes = await fetch(imageToFetch).then(res => res.arrayBuffer());
     const image = await pdfDoc.embedPng(imageBytes);
     const imageWidth = 230;
@@ -361,7 +361,7 @@ export class ShowExecutionComponent implements OnInit {
     {
       const ingredientData = this.selectedRecipe.ingredients.filter((data: any) => data.id == ingredient.id_ingrediente)[0]
       pageHeight = this.selectedRecipe.recipeIngredients.indexOf(ingredient) == 0 ? pageHeight - 35 : pageHeight - 30
-      imageToFetch = ingredientData.cover_image_name ? ingredientData.cover_image_name : noCoverImageUrl
+      imageToFetch = ingredientData.cover_image_name ? ingredientData.s3filename : noCoverImageUrl
       const imageBytes = await fetch(imageToFetch).then(res => res.arrayBuffer());
       const image = await pdfDoc.embedPng(imageBytes);
       const imageWidth = ingredientData.cover_image_name ? 20 : 40;
