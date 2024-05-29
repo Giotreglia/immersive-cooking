@@ -46,32 +46,8 @@ export class DashboardComponent implements OnInit {
 
   constructor(private http: HttpClient, private router: Router, private el: ElementRef, private location: Location, private backend: BackendService) {}
 
-  recipes: any[] = [
-    new Recipe (1, 'Carbonara', '../assets/carbonara.png', 'Primi', 1, false,
-          [
-            new Food(1, 'Spaghetti', 356, 80, '../../assets/spaghetti.png', 'Pasta', 1, 10.8, 82, 2.7, 0.3, false, 0.01425, 14.07414, 0.011001),
-            new Food(1, 'Guanciale', 117, 20, '../../assets/baconfette.png', 'Carne', 1, 21.5, 0, 0, 3.4, false, 0.06497, 60.92000, 0.02347),
-            new Food(1, "Uova di gallina", 128, 100, "uovodigallina.png", "Uova", 1, 12.04, 0, 8.07, 0, false, 0.02700, 14.95000, 0.01613),
-            new Food(1, "Pecorino", 404, 100, "pecorinoromano.png", "Latte e derivati", 1, 28.8, 0.02, 32, 0.02, false, 0.08944, 38.67000, 0.02037),
-            new Food(1, "Pepe nero", 296, 100, "pepenerograni2.png", "Spezie", 1, 10, 68, 2, 0, false, 0.00000, 0.00000, 0.03578)
-          ] 
-    ),
-    new Recipe (2, 'Cacio e pepe', '../assets/cacioepepe.png', 'Primi', 1, false,
-          [
-            new Food(1, 'Spaghetti', 356, 80, '../../assets/spaghetti.png', 'Pasta', 1, 10.8, 82, 2.7, 0.3, false, 0.01425, 14.07414, 0.011001),
-            new Food(1, "Pecorino", 404, 100, "pecorinoromano.png", "Latte e derivati", 1, 28.8, 0.02, 32, 0.02, false, 0.08944, 38.67000, 0.02037),
-            new Food(1, "Pepe nero", 296, 100, "pepenerograni2.png", "Spezie", 1, 10, 68, 2, 0, false, 0.00000, 0.00000, 0.03578)
-          ] 
-    ),
-    new Recipe (3, 'Amatriciana', '../assets/amatriciana.png', 'Primi', 1, false,
-          [
-            new Food(1, 'Spaghetti', 356, 80, '../../assets/spaghetti.png', 'Pasta', 1, 10.8, 82, 2.7, 0.3, false, 0.01425, 14.07414, 0.011001),
-            new Food(1, "Pecorino", 404, 100, "pecorinoromano.png", "Latte e derivati", 1, 28.8, 0.02, 32, 0.02, false, 0.08944, 38.67000, 0.02037),
-            new Food(1, "Pepe nero", 296, 100, "pepenerograni2.png", "Spezie", 1, 10, 68, 2, 0, false, 0.00000, 0.00000, 0.03578)
-          ] 
-),
-
-  ];
+  recipes: any[] = [];
+  filteredRecipes: any;
   currentPage: number = 0;
   lastPage: number = 0;
   pages: any = Array(this.lastPage);
@@ -89,6 +65,7 @@ export class DashboardComponent implements OnInit {
     let userStorage: any = localStorage.getItem('user');
     this.user = JSON.parse(userStorage);
     this.getRecipes();
+    this.filterRecipes();
     console.log(this.user)
   }
 
@@ -112,6 +89,7 @@ export class DashboardComponent implements OnInit {
       response => {
       console.log(response);
       this.recipes = response;
+      this.filteredRecipes = this.recipes;
       },
       error => {
         console.error('Errore durante la chiamata:', error);
@@ -125,5 +103,22 @@ export class DashboardComponent implements OnInit {
     })
   }
 
+  filterRecipes() {
+    this.filteredRecipes = this.recipes.filter(recipe => {
+      const matchesTitle = recipe.name.toLowerCase().includes(this.searchText.toLowerCase());
+      const matchesAuthor = this.authorId === 0 || recipe.authorId === this.authorId;
+      return matchesTitle;
+    });
+  }
+
+  // Metodo per chiamare il filtro ogni volta che i campi cambiano
+  onSearchTextChange() {
+    console.log('ciao')
+    this.filterRecipes();
+  }
+
+  onAuthorChange() {
+    this.filterRecipes();
+  }
 
 }

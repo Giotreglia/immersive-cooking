@@ -84,7 +84,7 @@ export class BackendService {
   }
 
   getpresigneduploadurl(filepath: any, type: any, toresize?: any){
-    let url = this.API_URL + "/getpresigneduploadurl&filepath="+filepath+"&contentType="+type;
+    let url = this.API_URL + "/smartgetpresigneduploadurl&filepath="+filepath+"&contentType="+type;
     if (toresize){
       url += '&temp=true';
     }

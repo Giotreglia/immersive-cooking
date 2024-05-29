@@ -19,7 +19,37 @@
             <div class="rounded pt-5 d-flex flex-column justify-content-between flex-grow-1" style="background-color: white;">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h3>Documenti interdisciplinari</h3>
-                    <button class="btn btn-lg btn-primary"><i class="fa-solid fa-plus me-2"></i>Aggiungi file</button>
+                    <button class="btn btn-lg btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><i class="fa-solid fa-plus me-2"></i>Aggiungi file</button>
+                    <!-- Modal -->
+                    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <label class="mb-1 ps-1" for="title">Nome del file</label>
+                                <div class="input-group flex-nowrap mb-3">
+                                    <input id="title" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="addon-wrapping">
+                                </div>
+                                <label class="mb-1 ps-1" for="course">Materia</label>
+                                <div class="input-group flex-nowrap mb-3">
+                                    <input id="course" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="addon-wrapping">
+                                </div>
+                                <label class="mb-1d ps-1" for="inputGroupFile01">Carica file</label>
+                                <div class="input-group mb-3">
+                                    <!-- <label class="input-group-text" for="inputGroupFile01">Carica file</label> -->
+                                    <input type="file" class="form-control" id="inputGroupFile01">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                            <button type="button" class="btn btn-primary">Salva</button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="rounded border">
                     <div class="row p-3">

@@ -90,9 +90,10 @@ export class NewRecipeComponent implements OnInit {
   }
 
   imageSrc: any;
+  file: any;
   onFileSelected(event: any) {
     const file: File = event.target.files[0];
-    
+    this.file = file;
     // Puoi gestire il file selezionato qui
     console.log('File selezionato:', file);
     if (file) {
@@ -136,41 +137,90 @@ export class NewRecipeComponent implements OnInit {
       total += element.EF * element.weight;
     }
     console.log(total);
-    this.recipe.footprint_score = 10 - (total / 8);
+    this.recipe.footprint_score = 10 - (total / 10);
   }
 
   saveRecipe(next: any) {
     // Aggiungi i valori al FormData
-
-
-    this.recipeData.append('id_user', this.user.id);
-    this.recipeData.append('id_organization', this.user.id_organization);
-    this.recipeData.append('name', this.recipe.name);
-    this.recipeData.append('portion_number', this.recipe.portion_number);
-    this.recipeData.append('portion_unit', this.recipe.portion_unit);
-    this.recipeData.append('description', this.recipe.description);
-    this.recipeData.append('footprint_score', this.recipe.footprint_score);
-    console.log(this.recipeData);
-    this.backend.saveRecipe(this.recipeData).subscribe(
-      response => {
-        let recipe;
-        recipe = response.body;
-        console.log(response.body);
-        this.createdRecipeId = recipe.id;
-        this.addIngredientsToRecipe(this.createdRecipeId);
-        if (next == 'next') {
-          this.nextStep();          
-        } 
-        if (next == 'out') {
-          this.router.navigate(['/dashboard/home']);
+    let date = new Date();
+    let now = date.getTime();
+    if (this.file) {
+      console.log(this.file);
+      let basepath = 'recipe/';
+      let thumbFilename =  'cover_image-' + now + this.file.name.split(" ").join("");
+      console.log(thumbFilename);
+      this.backend.getpresigneduploadurl(basepath + thumbFilename, this.file.type).subscribe(
+        response => {
+          console.log(response)
+          let requestUrl = response.body;
+          this.backend.s3Upload(requestUrl, this.file, this.file.type).subscribe(
+            response => {
+              console.log(response);
+              console.log(this.user)
+              if(response.status==200 || response.status== 201) {
+                this.recipeData.append('cover', thumbFilename);
+                this.recipeData.append('id_user', this.user.id);
+                this.recipeData.append('id_organization', this.user.id_organization);
+                this.recipeData.append('name', this.recipe.name);
+                this.recipeData.append('portion_number', this.recipe.portion_number);
+                this.recipeData.append('portion_unit', this.recipe.portion_unit);
+                this.recipeData.append('description', this.recipe.description);
+                this.recipeData.append('footprint_score', this.recipe.footprint_score);
+                console.log(this.recipeData);
+                this.backend.saveRecipe(this.recipeData).subscribe(
+                  response => {
+                    let recipe;
+                    recipe = response.body;
+                    console.log(response.body);
+                    this.createdRecipeId = recipe.id;
+                    this.addIngredientsToRecipe(this.createdRecipeId);
+                    if (next == 'next') {
+                      this.nextStep();          
+                    } 
+                    if (next == 'out') {
+                      this.router.navigate(['/dashboard/home']);
+                    }
+                    /* this.router.navigate(['/dashboard/home']); */
+                  },
+                  error => {
+                    console.error('Errore durante la chiamata:', error);
+                    // Gestisci l'errore se necessario
+                  }
+                )
+              }
+            })
         }
-        /* this.router.navigate(['/dashboard/home']); */
-      },
-      error => {
-        console.error('Errore durante la chiamata:', error);
-        // Gestisci l'errore se necessario
-      }
-    )
+      )
+    } if (!this.file) {
+      this.recipeData.append('id_user', this.user.id);
+      this.recipeData.append('id_organization', this.user.id_organization);
+      this.recipeData.append('name', this.recipe.name);
+      this.recipeData.append('portion_number', this.recipe.portion_number);
+      this.recipeData.append('portion_unit', this.recipe.portion_unit);
+      this.recipeData.append('description', this.recipe.description);
+      this.recipeData.append('footprint_score', this.recipe.footprint_score);
+      console.log(this.recipeData);
+      this.backend.saveRecipe(this.recipeData).subscribe(
+        response => {
+          let recipe;
+          recipe = response.body;
+          console.log(response.body);
+          this.createdRecipeId = recipe.id;
+          this.addIngredientsToRecipe(this.createdRecipeId);
+          if (next == 'next') {
+            this.nextStep();          
+          } 
+          if (next == 'out') {
+            this.router.navigate(['/dashboard/home']);
+          }
+          /* this.router.navigate(['/dashboard/home']); */
+        },
+        error => {
+          console.error('Errore durante la chiamata:', error);
+          // Gestisci l'errore se necessario
+        }
+      )
+    }
   }
 
   ingredients: any;

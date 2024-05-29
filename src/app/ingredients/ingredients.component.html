@@ -37,8 +37,8 @@
             <div class="drop-zone-food px-3">
                 <div class="drag-el my-2 position-relative pb-1" *ngFor="let food of filteredAndVisibleFoods, index as i" cdkDrag>
                     <div class="img-wrapper" >
-                        <img *ngIf="food.cover_image_name" src="{{food.cover_image_name}}" alt="{{food.name}}" class="food-img">
-                        <img *ngIf="!food.cover_image_name" src="https://www.innerintegratori.it/wp-content/uploads/2021/06/placeholder-image.png" alt="" class="food-img">
+                        <img *ngIf="food.s3filename" src="{{food.s3filename}}" alt="{{food.name}}" class="food-img">
+                        <img *ngIf="!food.s3filename" src="https://www.innerintegratori.it/wp-content/uploads/2021/06/placeholder-image.png" alt="" class="food-img">
                     </div>
                     <span class="d-block food-name">{{ food.name }}</span>
                     <div class="input-group">
@@ -84,7 +84,7 @@
                                 <ul class="list-group border-bottom pb-3">
                                     <li class="list-group-item d-flex align-content-center border-0">
                                         <div class="img-wrapper me-3">
-                                            <img *ngIf="food.cover_image_name" src="{{food.cover_image_name}}" alt="{{food.name}}" class="food-img">
+                                            <img *ngIf="food.cover_image_name" src="{{food.s3filename}}" alt="{{food.name}}" class="food-img">
                                             <img *ngIf="!food.cover_image_name" src="https://www.innerintegratori.it/wp-content/uploads/2021/06/placeholder-image.png" alt="" class="food-img">
                                         </div>
                                         <div class="w-100 d-flex align-items-center">

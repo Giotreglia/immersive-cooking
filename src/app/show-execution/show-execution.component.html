@@ -133,7 +133,7 @@
                             <h5>Ingredienti</h5>
                             <ul class="list-group">
                                 <li *ngFor="let ingredient of selectedExecution.recipe.ingredients; index as i" class="list-group-item d-flex justify-content-between align-items-center">
-                                  <img class="ingredient-img" [src]="ingredient.cover_image_name" alt="">
+                                  <img class="ingredient-img" [src]="ingredient.s3filename" alt="">
                                   <span>{{ingredient.name}}</span>
                                   <span class="badge text-bg-primary rounded-pill">{{selectedRecipe.recipeIngredients[i].weight}} gr.</span>
                                 </li>
@@ -142,7 +142,7 @@
                         <div class="col-6">
                             <div class="d-flex justify-content-center w-100">
                                 <div class="position-relative overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded h-300px
-                                d-flex justify-content-center align-content-center overflow-hidden" style="width: 300px;" [style.background-image]="'url('+selectedExecution.recipe.cover+')'">
+                                d-flex justify-content-center align-content-center overflow-hidden" style="width: 300px;" [style.background-image]="'url('+selectedExecution.recipe.s3filename+')'">
                                 </div>
                             </div>
                         </div>

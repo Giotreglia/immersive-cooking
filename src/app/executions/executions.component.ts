@@ -124,10 +124,27 @@ export class ExecutionsComponent {
 
   filterExecutions() {
     console.log(this.recipeId)
-    if (this.recipeId == 0) {
+    this.filteredExecutions = this.executions.filter((execution: { recipe: { name: string; }; recipe_id: any }) => {
+      const matchesName = execution.recipe.name.toLowerCase().includes(this.searchText.toLowerCase());
+      const matchesRecipe = this.recipeId == 0 || execution.recipe_id == this.recipeId;
+
+      return matchesName && matchesRecipe;
+    })
+    /* if (this.recipeId == 0) {
       this.filteredExecutions = this.executions;
     } else {
       this.filteredExecutions = this.executions.filter((execution: { recipe_id: any; }) => execution.recipe_id == this.recipeId);
-    }
+    } */
   }
+
+  /* filterIngredients() {
+    console.log(this.ingredients)
+    console.log(this.categoryId)
+    this.filteredIngredients = this.ingredients.filter(ingredient => {
+      const matchesName = ingredient.name.toLowerCase().includes(this.searchText.toLowerCase());
+      const matchesCategory = this.categoryId == 0 || ingredient.id_category == this.categoryId;
+      console.log(matchesCategory)
+      return matchesName && matchesCategory;
+    });
+  } */
 }

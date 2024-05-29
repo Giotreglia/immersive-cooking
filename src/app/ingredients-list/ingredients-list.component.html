@@ -18,13 +18,13 @@
                 <div class="col">
                     <div class="mb-3 d-flex flex-column">
                         <label for="name" class="mb-2">Cerca per nome</label>
-                        <input id="name" type="text" class="form-control w-100" placeholder="Cerca" aria-label="Username" aria-describedby="basic-addon1" [(ngModel)]="searchText">
+                        <input id="name" type="search" class="form-control w-100" placeholder="Cerca" aria-label="Username" aria-describedby="basic-addon1" [(ngModel)]="searchText" (input)="filterIngredients()">
                     </div>
                 </div>
                 <div class="col">
                     <div class="mb-3 d-flex flex-column">
                         <label for="author" class="mb-2">Filtra per categoria</label>
-                        <select *ngIf="categories" id="author" type="text" class="form-select w-100" placeholder="Cerca" aria-label="Username" aria-describedby="basic-addon1" [(ngModel)]="authorId"> 
+                        <select *ngIf="categories" id="author" type="text" class="form-select w-100" placeholder="Cerca" aria-label="Username" aria-describedby="basic-addon1" [(ngModel)]="categoryId" (change)="filterIngredients()"> 
                             <option value="0">Tutti</option>
                             <option [value]="category.id" *ngFor="let category of categories">{{category.name}}</option>
                         </select>
@@ -32,72 +32,74 @@
                 </div>
             </div>
             <div class="rounded pt-5 px-3 d-flex flex-column justify-content-between flex-grow-1" style="background-color: white;">
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr class="fw-bold">
-                            <th scope="col">Id</th>
-                            <th scope="col">Thumb</th>
-                            <th scope="col">Nome</th>
-                            <th scope="col">Categoria</th>
-                            <th scope="col">Peso di default</th>
-                            <th scope="col">Kcal/100gr</th>
-                            <th scope="col">CF Carbon</th>
-                            <th scope="col">WF Water</th>
-                            <th scope="col">EF Soil</th>
-                            <th scope="col">Azioni</th>
-                        </tr>
-                    </thead>
-                    <tbody class="overflow-auto" *ngIf="categories.length >0">
-                      <tr *ngFor="let ingredient of foods; index as i">
-                        <td>{{ ingredient.id }}</td>
-                        <td>
-                            <div class="d-flex justify-content-center">
-                                <div class="position-relative overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded min-h-75px
-                                d-flex justify-content-center align-content-center overflow-hidden" style="width: 150px;" [style.background-image]="'url('+ PATH + ingredient.cover_image_name+')'">                            
-                                </div>
-                            </div>
-                        </td>
-                        <td>{{ ingredient.name }}</td>
-                        <td>{{ findCategory(ingredient.id_category) }}</td>
-                        <td>{{ ingredient.weight }} gr.</td>
-                        <td>{{ ingredient.kcal }} kcal</td>
-                        <td>{{ ingredient.CF }}</td>
-                        <td>{{ ingredient.WF }}</td>
-                        <td>{{ ingredient.EF }}</td>
-                        <td>
-                            <div class="d-flex justify-content-center gap-2">
-                                <button class="btn btn-sm btn-icon btn-primary" [routerLink]="['/dashboard/modifica-ingrediente', ingredient.id]">
-                                  <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-icon btn-danger" data-bs-toggle="modal" (click)="ingredient.showModal = !ingredient.showModal">
-                                  <i class="fas fa-trash"></i>
-                                </button>
-                                <!-- Modal -->
-                                <div class="modal fade" [class]="ingredient.showModal?'show':''" tabindex="-1" aria-labelledby="exampleModalLabel" [style.display]="ingredient.showModal?'block':'none'">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalLabel">{{ingredient.name}}</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="ingredient.showModal = false"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            Sei sicuro di voler eliminare l'ingrediente {{ingredient.name}}?
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="ingredient.showModal = false">Annulla</button>
-                                            <button type="button" class="btn btn-primary" (click)="deleteIngredient(ingredient.id)">Elimina</button>
-                                        </div>
-                                    </div>
+                <div style="height: 500px; overflow-y: auto;">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr class="fw-bold">
+                                <th scope="col">Id</th>
+                                <th scope="col">Thumb</th>
+                                <th scope="col">Nome</th>
+                                <th scope="col">Categoria</th>
+                                <th scope="col">Peso di default</th>
+                                <th scope="col">Kcal/100gr</th>
+                                <th scope="col">CF Carbon</th>
+                                <th scope="col">WF Water</th>
+                                <th scope="col">EF Soil</th>
+                                <th scope="col">Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody class="overflow-auto" *ngIf="categories.length >0">
+                          <tr *ngFor="let ingredient of filteredIngredients; index as i">
+                            <td>{{ ingredient.id }}</td>
+                            <td>
+                                <div class="d-flex justify-content-center">
+                                    <div class="position-relative overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded min-h-75px
+                                    d-flex justify-content-center align-content-center overflow-hidden" style="width: 150px;" [style.background-image]="'url('+ ingredient.s3filename +')'">                            
                                     </div>
                                 </div>
-                            </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                </table>
+                            </td>
+                            <td>{{ ingredient.name }}</td>
+                            <td>{{ findCategory(ingredient.id_category) }}</td>
+                            <td>{{ ingredient.weight }} gr.</td>
+                            <td>{{ ingredient.kcal }} kcal</td>
+                            <td>{{ ingredient.CF }}</td>
+                            <td>{{ ingredient.WF }}</td>
+                            <td>{{ ingredient.EF }}</td>
+                            <td>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button class="btn btn-sm btn-icon btn-primary" [routerLink]="['/dashboard/modifica-ingrediente', ingredient.id]">
+                                      <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-icon btn-danger" data-bs-toggle="modal" (click)="ingredient.showModal = !ingredient.showModal">
+                                      <i class="fas fa-trash"></i>
+                                    </button>
+                                    <!-- Modal -->
+                                    <div class="modal fade" [class]="ingredient.showModal?'show':''" tabindex="-1" aria-labelledby="exampleModalLabel" [style.display]="ingredient.showModal?'block':'none'">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="exampleModalLabel">{{ingredient.name}}</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="ingredient.showModal = false"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Sei sicuro di voler eliminare l'ingrediente {{ingredient.name}}?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="ingredient.showModal = false">Annulla</button>
+                                                <button type="button" class="btn btn-primary" (click)="deleteIngredient(ingredient.id)">Elimina</button>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-        <div class="d-flex w-100 justify-content-center mt-3">
+        <!-- <div class="d-flex w-100 justify-content-center mt-3">
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
                   <li class="page-item"><button class="page-link" (click)="goToPage(1)" [disabled]="currentPage === 1"><i class="fa-solid fa-angles-left"></i></button></li>
@@ -107,6 +109,6 @@
                   <li class="page-item"><button class="page-link" (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages"><i class="fa-solid fa-angles-right"></i></button></li>
                 </ul>
             </nav>
-        </div>
+        </div> -->
     </div>
 </div>

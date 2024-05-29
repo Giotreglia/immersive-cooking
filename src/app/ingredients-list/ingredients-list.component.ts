@@ -444,9 +444,10 @@ export class IngredientsListComponent implements OnInit {
   totalPages: number = 0;
   pagesToShow: number[] = [];
   curators: any[] = [];
-  authorId: any = 0;
+  categoryId: any = 0;
   searchText: any = '';
   ingredients: any[] = [];
+  filteredIngredients: any;
   categories: any = [];
 
   user: any;
@@ -478,13 +479,13 @@ export class IngredientsListComponent implements OnInit {
   }
 
   setPopover() {
-    this.foods.forEach((food: { popover: boolean; }) => {
+    this.ingredients.forEach((food: { popover: boolean; }) => {
       food.popover = false;
     });
   }
 
   setShowModal() {
-    this.foods.forEach((food: { showModal: boolean; }) => {
+    this.ingredients.forEach((food: { showModal: boolean; }) => {
       food.showModal = false;
     });
   }
@@ -492,7 +493,8 @@ export class IngredientsListComponent implements OnInit {
   getIngredients() {
     this.backend.getIngredients().subscribe((resp) => {
       console.log(resp);
-      this.foods = resp;
+      this.ingredients = resp;
+      this.filteredIngredients = this.ingredients;
       this.setShowModal();
     })
   }
@@ -515,6 +517,17 @@ export class IngredientsListComponent implements OnInit {
   findCategory(categoryId: any) {
     let category = this.categories.find((category: any) => category.id == categoryId);
     return category.name
+  }
+
+  filterIngredients() {
+    console.log(this.ingredients)
+    console.log(this.categoryId)
+    this.filteredIngredients = this.ingredients.filter(ingredient => {
+      const matchesName = ingredient.name.toLowerCase().includes(this.searchText.toLowerCase());
+      const matchesCategory = this.categoryId == 0 || ingredient.id_category == this.categoryId;
+      console.log(matchesCategory)
+      return matchesName && matchesCategory;
+    });
   }
 
 }
