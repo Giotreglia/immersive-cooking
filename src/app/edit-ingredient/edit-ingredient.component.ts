@@ -123,6 +123,12 @@ export class EditIngredientComponent implements OnInit {
     // Aggiungi i valori al FormData
     this.ingredient.append('name', this.selectedIngredient.name);
     this.ingredient.append('weight', this.selectedIngredient.weight);
+    this.ingredient.append('kcal', this.selectedIngredient.kcal);
+    this.ingredient.append('id_category', this.selectedIngredient.id_category);
+    this.ingredient.append('protein', this.selectedIngredient.protein);
+    this.ingredient.append('carbohydrates', this.selectedIngredient.carbohydrates);
+    this.ingredient.append('fats', this.selectedIngredient.fats);
+    this.ingredient.append('sugar', this.selectedIngredient.sugar);
     this.ingredient.append('CF', this.selectedIngredient.CF);
     this.ingredient.append('WF', this.selectedIngredient.WF);
     this.ingredient.append('EF', this.selectedIngredient.EF);

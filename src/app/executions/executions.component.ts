@@ -9,7 +9,7 @@ import { Location } from '@angular/common';
   templateUrl: './executions.component.html',
   styleUrl: './executions.component.scss'
 })
-export class ExecutionsComponent {
+export class ExecutionsComponent implements OnInit {
 
   constructor(private http: HttpClient, private router: Router, private el: ElementRef, private location: Location, private backend: BackendService) {}
 

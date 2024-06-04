@@ -71,9 +71,6 @@
                                     <button class="btn btn-sm btn-icon btn-secondary" [routerLink]="['/dashboard/esecuzione', execution.id]">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-icon btn-primary" [routerLink]="['/dashboard/modifica-esecuzione', execution.id]">
-                                      <i class="fas fa-edit"></i>
-                                    </button>
                                     <button class="btn btn-sm btn-icon btn-danger" data-bs-toggle="modal" (click)="execution.showModal = !execution.showModal">
                                       <i class="fas fa-trash"></i>
                                     </button>

@@ -13,6 +13,7 @@ import { NewExecutionComponent } from "../new-execution/new-execution.component"
 import { ShowExecutionComponent } from "../show-execution/show-execution.component";
 import { ResultsComponent } from "../results/results.component";
 import { RecipeDocumentsComponent } from "../recipe-documents/recipe-documents.component";
+import { EditRecipeComponent } from "../edit-recipe/edit-recipe.component";
 
 export const LayoutRoutes: Routes = [
   {
@@ -38,6 +39,9 @@ export const LayoutRoutes: Routes = [
       },
       {
         path: 'ricetta/:recipeId', component: ShowRecipeComponent
+      },
+      {
+        path: 'modifica-ricetta/:recipeId', component: EditRecipeComponent
       },
       {
         path: 'esecuzioni', component: ExecutionsComponent

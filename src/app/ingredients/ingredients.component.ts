@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BackendService } from '../services/backend.service';
 import { Location } from '@angular/common';
-import { Output, EventEmitter } from '@angular/core';
+import { Output, EventEmitter, Input } from '@angular/core';
 
 class Food {
   constructor(
@@ -47,10 +47,12 @@ class Recipe {
 export class IngredientsComponent implements OnInit {
   
   @Output() ingredients = new EventEmitter<any>();
+  @Input() ingredientsList: any;
+  @Input() selectedRecipeId: any;
 
   constructor(private http: HttpClient, private router: Router, private el: ElementRef, private location: Location, private backend: BackendService) {}
 
-  foods: Food[] = [
+  foods: any[] = [
     new Food(1, "Avena in fiocchi", 367, 100, "avenainfiocchi.png", "Cereali", 1, 8, 66.8, 0.07, 6.05, false, 0.00443, 17.74264, 0.01023),
     new Food(1, "Farro", 353, 100, "farroseme.png", "Cereali", 1, 14.06, 69.3, 2.04, 2.04, false, 0.01425, 14.07414, 0.01100),
     new Food(1, "Quinoa cruda", 376, 100, "quinoaseme.png", "Cereali", 1, 15.04, 57.8, 8.01, 5.03, false, 0.01425, 14.07414, 0.01100),
@@ -494,7 +496,7 @@ export class IngredientsComponent implements OnInit {
    }
  
    // Ottiene le categorie univoche in base agli elementi filtrati
-   getCategories() {
+/*    getCategories() {
      this.foodCategories = [];
      this.foods.forEach(element => {
        if (!this.foodCategories.includes(element.category)) {
@@ -502,12 +504,17 @@ export class IngredientsComponent implements OnInit {
        }
      });
      console.log(this.foodCategories);
-   }
+   } */
  
    // Eseguito all'inizio
    ngOnInit() {
      let userStorage: any = localStorage.getItem('user');
      this.user = JSON.parse(userStorage);
+     if (this.ingredientsList) {
+      console.log(this.ingredientsList)
+      this.done = this.ingredientsList;
+      this.emitData();
+     }
      this.getCategories();
      this.getIngredients();
      this.toLowercaseCategories();
@@ -529,7 +536,7 @@ export class IngredientsComponent implements OnInit {
  
    // Filtro per nome e categoria
    filterName: string = '';
-   filterCategory: string = '';
+   filterCategory: any = '0';
  
  
    totalCF: number = 0;
@@ -899,6 +906,9 @@ export class IngredientsComponent implements OnInit {
   }
 
   saveRecipe() {
+    if (this.ingredientsList) {
+      
+    }
     let id: number = 1;
     let name: string = this.newRecipeName;
     let image: string = this.setRecipeImage();
@@ -939,6 +949,25 @@ export class IngredientsComponent implements OnInit {
       this.filterFoodsByCategory();
     }
     console.log(this.filteredFoods);
+  }
+
+  filterIngredients() {
+    console.log(this.foods)
+    console.log(this.filterCategory)
+    console.log(this.filterName);
+    this.filteredAndVisibleFoods = this.foods.filter((ingredient) => {
+      const matchesName = ingredient.name.toLowerCase().includes(this.filterName.toLowerCase());
+      const matchesCategory = this.filterCategory == '0' || ingredient.id_category == this.filterCategory;
+      console.log(matchesName)
+      return matchesName && matchesCategory;
+    });
+  }
+
+  getCategories() {
+    this.backend.getCategories().subscribe((resp) => {
+      console.log(resp);
+      this.foodCategories = resp;
+    })
   }
 
   // Salvataggio risultati in pdf
@@ -1022,6 +1051,14 @@ export class IngredientsComponent implements OnInit {
       
       this.done.splice(i, 1);
       
+    }
+
+    deleteIngredient(ingredientId: any, i: any) {
+      this.done.splice(i, 1);
+      this.backend.deleteRecipeIngredient(this.selectedRecipeId, ingredientId).subscribe((resp) => {
+        console.log(resp);
+        this.emitData();
+      })
     }
 
 }

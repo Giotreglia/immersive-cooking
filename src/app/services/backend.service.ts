@@ -43,6 +43,10 @@ export class BackendService {
     return this.http.post<any>(`${this.API_URL}/addrecipe`, data, {observe: 'response', withCredentials: true})
   }
 
+  editRecipe(data: any, recipeId: any) {
+    return this.http.post<any>(`${this.API_URL}/saverecipe&recipeId=${recipeId}`, data, {observe: 'response', withCredentials: true})
+  }
+
   deleteRecipe(recipeId: any) {
     return this.http.delete<any>(`${this.API_URL}/deleterecipe&recipeId=${recipeId}`, {withCredentials: true})
   }
@@ -69,6 +73,14 @@ export class BackendService {
 
   addRecipeIngredient(data: any) {
     return this.http.post<any>(`${this.API_URL}/addrecipeingredient`, data, {withCredentials: true})
+  }
+
+  editRecipeIngredient(data: any) {
+    return this.http.post<any>(`${this.API_URL}/saverecipeingredient`, data, {withCredentials: true})
+  }
+
+  deleteRecipeIngredient(recipeId: any, ingredientId: any) {
+    return this.http.delete<any>(`${this.API_URL}/deleterecipeingredient&recipeId=${recipeId}&ingredientId=${ingredientId}`)
   }
 
   getExecutions() {

@@ -6,10 +6,10 @@
         </div>
         <div class="border-bottom pb-3 mb-3 d-flex flex-column">
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Filtra per nome" aria-label="Username" aria-describedby="basic-addon1" [(ngModel)]="filterName" (change)="filterFoods()">
-                <select class="form-select" aria-label="Default select example" [(ngModel)]="filterCategory" (change)="filterFoods()">
-                    <option value="" selected>Tutti</option>
-                    <option value="{{food}}" *ngFor="let food of foodCategories">{{food}}</option>
+                <input type="text" class="form-control" placeholder="Filtra per nome" aria-label="Username" aria-describedby="basic-addon1" [(ngModel)]="filterName" (input)="filterIngredients()">
+                <select class="form-select" aria-label="Default select example" [(ngModel)]="filterCategory" (change)="filterIngredients()">
+                    <option value="0" selected>Tutti</option>
+                    <option [value]="category.id" *ngFor="let category of foodCategories">{{category.name}}</option>
                 </select>
             </div>
 <!--             <label for="customRange3" [class]="listSwitch? '' : 'barOff'">Indice di footprint</label>
@@ -92,7 +92,8 @@
                                         </div>
                                         <div class="input-group">
                                             <input [(ngModel)]="food.weight" (change)="setWeightAndScale()" type="number" class="form-control ingredient-weight text-secondary">
-                                            <button class="btn btn-danger" (click)="removeFood(food, i)"><i class="fa-solid fa-trash-can"></i></button>
+                                            <button *ngIf="!selectedRecipeId" class="btn btn-danger" (click)="removeFood(food, i)"><i class="fa-solid fa-trash-can"></i></button>
+                                            <button *ngIf="selectedRecipeId" class="btn btn-danger" (click)="deleteIngredient(food.id, i)"><i class="fa-solid fa-trash-can"></i></button>
                                         </div>
                                     </li>
                                 </ul>

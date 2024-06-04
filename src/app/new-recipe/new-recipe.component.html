@@ -67,12 +67,12 @@
                     <div class="p-3 pb-0 height">
                         <app-ingredients (ingredients)=onIngredientAdded($event)></app-ingredients>
                         <div class="d-flex justify-content-end w-100 my-3">
-                            <button class="btn btn-lg btn-secondary me-2" (click)="saveRecipe('next')">Aggiungi cottura</button>
+                            <!-- <button class="btn btn-lg btn-secondary me-2" (click)="saveRecipe('next')">Aggiungi cottura</button> -->
                             <button class="btn btn-lg btn-primary" (click)="saveRecipe('out')">Salva ricetta e esci</button>
                         </div>
                     </div>
                 </mat-tab>
-                <mat-tab label="Esecuzione">
+                <!-- <mat-tab label="Esecuzione">
                     <div class="p-3 pb-0 height">
                         <div class="row">
                             <form class="row g-3" id="ingredient-form" (ngSubmit)="submitForm()" method="post"> 
@@ -82,7 +82,7 @@
                                 </div>
                                 <div class="col">
                                     <label for="inputAddress" class="form-label">Unità di misura porzioni</label>
-                                    <select type="text" class="form-select" id="inputAddress" name="category" placeholder="Nome categoria" [(ngModel)]="execution.portion_unit"> <!-- [(ngModel)]="ingredient.category" -->
+                                    <select type="text" class="form-select" id="inputAddress" name="category" placeholder="Nome categoria" [(ngModel)]="execution.portion_unit">
                                         <option value="person">persone</option>
                                         <option value="gram">grammi</option>
                                         <option value="bakingTray">teglie</option>
@@ -110,7 +110,7 @@
                             <button class="btn btn-lg btn-primary" type="submit" form="ingredient-form">Salva cottura e genera report</button>
                         </div>
                     </div>
-                </mat-tab>
+                </mat-tab> -->
             </mat-tab-group>
             <!-- <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">

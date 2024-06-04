@@ -86,11 +86,15 @@
                         </div>
                         <div class="col-4 input-col pe-0">
                             <!-- <label class="mb-2">Immagine</label> -->
-                            <label *ngIf="!imageSrc" class="input-label rounded" for="inputGroupFile01"><span class="h-100 d-flex align-items-center justify-content-center">carica immagine</span></label>
+                            <label *ngIf="!imageSrc && !selectedIngredient.s3filename" class="input-label rounded" for="inputGroupFile01"><span class="h-100 d-flex align-items-center justify-content-center">carica immagine</span></label>
                             <input type="file" class="form-control d-none" id="inputGroupFile01" (change)="onFileSelected($event)" accept=".jpg,.png">
+                            <div class="position-relative" *ngIf="selectedIngredient.s3filename" style="height: 410px !important;">
+                                <img class="input-label rounded" [src]="selectedIngredient.s3filename" alt="">
+                                <button type="button" class="btn-close" style="position: absolute; top: 5px; right: 5px;" aria-label="Close" (click)="selectedIngredient.s3filename = null"></button>
+                            </div>
                             <div class="position-relative" *ngIf="imageSrc" style="height: 410px !important;">
                                 <img class="input-label rounded" [src]="imageSrc" alt="">
-                                <button type="button" class="btn-close" style="position: absolute; top: 5px; right: 5px;" aria-label="Close" (click)="imageSrc = null"></button>
+                                <button type="button" class="btn-close" style="position: absolute; top: 5px; right: 5px;" aria-label="Close" (click)="selectedIngredient.s3filename = null"></button>
                             </div>
                         </div>
                     </form>

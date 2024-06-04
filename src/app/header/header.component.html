@@ -29,7 +29,7 @@
           </div>
           <div>
             <ul class="list-group">
-              <li class="list-group-item d-flex justify-content-between"><span class="fw-bold">Scuola</span><span>{{user.organization.name}}</span></li>
+              <li *ngIf="user.organization.name" class="list-group-item d-flex justify-content-between"><span class="fw-bold">Scuola</span><span>{{user.organization.name}}</span></li>
               <li class="list-group-item d-flex justify-content-between"><span class="fw-bold">Classe</span><span>{{user.classroom.name}}</span></li>
               <li class="list-group-item d-flex justify-content-between"><span class="fw-bold">Ruolo</span><span>{{user.level}}</span></li>
             </ul>

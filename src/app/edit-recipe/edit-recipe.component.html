@@ -1,0 +1,81 @@
+<div class="container-fluid py-5">
+    <div class="d-flex mb-3 justify-content-between">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb text-primary">
+                <li class="breadcrumb-item text-primary" style="cursor: pointer;" aria-current="page" (click)="routeTo('dashboard/home')">Dashboard</li>
+                <li class="breadcrumb-item breadcrumb-active" style="cursor: pointer;" aria-current="page">Modifica ricetta</li>
+            </ol>
+        </nav>
+        <h4>{{user.username}}</h4>
+    </div>
+    <div *ngIf="selectedRecipe" class="row shadow pt-4 rounded">
+        <div class="col-12 d-flex flex-column justify-content-between h-100">
+            <mat-tab-group [selectedIndex]="selectedIndex">
+                <mat-tab label="Crea la tua ricetta">
+                    <div class="p-3 pb-0 height">
+                        <div class="d-flex flex-column w-100">
+                            <h4>Inserisci i dati della tua ricetta</h4>
+                            <span class="text-secondary">Crea la tua ricetta</span>
+                        </div>
+                        <div class="row">
+                            <form class="row g-3">
+                                <div class="col-8">
+                                    <div class="row py-0 d-flex justify-content-between flex-column gap-3">
+                                        <div class="col-12">
+                                            <label for="inputAddress" class="form-label">Titolo</label>
+                                            <input type="text" class="form-control" id="inputAddress" name="name" placeholder="Titolo ricetta" [(ngModel)]="selectedRecipe.name">
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <label for="inputAddress" class="form-label">Numero porzioni</label>
+                                                    <input type="number" class="form-control" id="inputAddress" name="portion_number" placeholder="numero porzioni" [(ngModel)]="selectedRecipe.portion_number">        
+                                                </div>
+                                                <div class="col">
+                                                    <label for="inputAddress" class="form-label">Unità di misura porzioni</label>
+                                                    <select type="text" class="form-select" id="inputAddress" name="category" placeholder="Nome categoria" [(ngModel)]="selectedRecipe.portion_unit"> <!-- [(ngModel)]="ingredient.category" -->
+                                                        <option value="person">persone</option>
+                                                        <option value="gram">grammi</option>
+                                                        <option value="bakingTray">teglie</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label for="inputAddress2" class="form-label">Descrizione</label>
+                                            <textarea rows="8" type="text" class="form-control" id="inputAddress2" name="description" placeholder="Procedimento ricetta" [(ngModel)]="selectedRecipe.description"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4 input-col pe-0">
+                                    <!-- <label class="mb-2">Immagine</label> -->
+                                    <label *ngIf="!imageSrc && !selectedRecipe.s3filename" class="input-label rounded" for="inputGroupFile01"><span class="h-100 d-flex align-items-center justify-content-center">carica immagine</span></label>
+                                    <input type="file" class="form-control d-none" id="inputGroupFile01" (change)="onFileSelected($event)" accept=".jpg,.png">
+                                    <div class="position-relative" *ngIf="imageSrc" style="height: 400px !important;">
+                                        <img class="input-label rounded" [src]="imageSrc" alt="">
+                                        <button type="button" class="btn-close" style="position: absolute; top: 5px; right: 5px;" aria-label="Close" (click)="imageSrc = null"></button>
+                                    </div>
+                                    <div class="position-relative" *ngIf="selectedRecipe.s3filename" style="height: 400px !important;">
+                                        <img class="input-label rounded" [src]="selectedRecipe.s3filename" alt="">
+                                        <button type="button" class="btn-close" style="position: absolute; top: 5px; right: 5px;" aria-label="Close" (click)="selectedRecipe.s3filename = null"></button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="d-flex justify-content-end w-100 my-3">
+                            <button class="btn btn-lg btn-primary" (click)="nextStep()">Continua</button>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Aggiungi gli ingredienti">
+                    <div class="p-3 pb-0 height">
+                        <app-ingredients (ingredients)=onIngredientAdded($event) [ingredientsList]="ingredientsList" [selectedRecipeId]="selectedRecipeId"></app-ingredients>
+                        <div class="d-flex justify-content-end w-100 my-3">
+                            <button class="btn btn-lg btn-primary" (click)="saveRecipe('out')">Salva ricetta e esci</button>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
+</div>

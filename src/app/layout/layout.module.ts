@@ -22,6 +22,9 @@ import { NewExecutionComponent } from '../new-execution/new-execution.component'
 import { ShowExecutionComponent } from '../show-execution/show-execution.component';
 import { ResultsComponent } from '../results/results.component';
 import { RecipeDocumentsComponent } from '../recipe-documents/recipe-documents.component';
+import { EditRecipeComponent } from '../edit-recipe/edit-recipe.component';
+
+
 
 
 
@@ -45,7 +48,8 @@ import { MatTabsModule } from '@angular/material/tabs';
     NewExecutionComponent,
     ShowExecutionComponent,
     ResultsComponent,
-    RecipeDocumentsComponent
+    RecipeDocumentsComponent,
+    EditRecipeComponent
   ],
   imports: [
     RouterModule.forChild(LayoutRoutes),

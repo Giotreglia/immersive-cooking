@@ -45,6 +45,7 @@
                         <div class="col-12">
                             <div class="col">
                                 <div class="mb-3">
+                                    <p class="alert alert-primary" role="alert">Inserisci il file .csv generato dal software Connected Cooking del forno iCombi pro Rational</p>
                                     <label for="csvFileUpload" class="form-label">File cottura</label>
                                     <input class="form-control" type="file" #fileImportInput name="File Upload" id="csvFileUpload" name="file" [(ngModel)]="execution.file"  (change)="fileChangeListener($event)" accept=".csv">
                                 </div>        
