@@ -95,6 +95,18 @@ export class BackendService {
     return this.http.delete<any>(`${this.API_URL}/deleteexecution&executionId=${executionId}`, {withCredentials: true})
   }
 
+  getFiles(recipeId: any) {
+    return this.http.get<any>(`${this.API_URL}/getfiles&id_ricetta=${recipeId}`, {withCredentials: true})
+  }
+
+  addFile(data: any) {
+    return this.http.post<any>(`${this.API_URL}/addfile`, data, {withCredentials: true})
+  }
+
+  deleteFile(fileId: any) {
+    return this.http.delete<any>(`${this.API_URL}/deletefile&id=${fileId}`, {withCredentials: true})
+  }
+
   getpresigneduploadurl(filepath: any, type: any, toresize?: any){
     let url = this.API_URL + "/smartgetpresigneduploadurl&filepath="+filepath+"&contentType="+type;
     if (toresize){

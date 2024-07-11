@@ -132,12 +132,16 @@ export class NewRecipeComponent implements OnInit {
     console.log(this.ingredients)
     for (let i = 0; i < this.ingredients.length; i++) {
       const element = this.ingredients[i];
-      total += element.CF * element.weight;
-      total += (element.WF * element.weight) / 1000;
+      total += element.CF * element.weight / 10;
+      total += (element.WF * element.weight) / 10;
       total += element.EF * element.weight;
     }
     console.log(total);
-    this.recipe.footprint_score = 10 - (total / 10);
+    total = (total / 200);
+    if (total > 10) {
+      total == 10;
+    }
+    this.recipe.footprint_score = total;
   }
 
   saveRecipe(next: any) {
@@ -158,6 +162,9 @@ export class NewRecipeComponent implements OnInit {
               console.log(response);
               console.log(this.user)
               if(response.status==200 || response.status== 201) {
+                if (this.recipe.footprint_score > 10) {
+                  this.recipe.footprint_score = 9.9;
+                }
                 this.recipeData.append('cover', thumbFilename);
                 this.recipeData.append('id_user', this.user.id);
                 this.recipeData.append('id_organization', this.user.id_organization);

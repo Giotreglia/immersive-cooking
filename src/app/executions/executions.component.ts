@@ -1,8 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, LOCALE_ID, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BackendService } from '../services/backend.service';
 import { Location } from '@angular/common';
+import { format, utcToZonedTime } from 'date-fns-tz';
+import it from 'date-fns/locale/it';
+
 
 @Component({
   selector: 'app-executions',
@@ -75,7 +78,12 @@ export class ExecutionsComponent implements OnInit {
       console.log(resp);
       this.executions = resp;
       this.filteredExecutions = this.executions;
-      this.executions.forEach((element: { recipe_id: any; }) => {
+      this.executions.forEach((element: { recipe_id: any; kwh: any; creation_date: any; date: any; }) => {
+        element.kwh = parseFloat(element.kwh);
+        let dateStr = element.creation_date + 'Z';
+        let date = new Date(dateStr);
+        const utcDate = utcToZonedTime(date, 'Europe/Rome');
+        element.date = format(utcDate, 'yyyy-MM-dd HH:mm', { timeZone: 'Europe/Rome', locale: it });
         if (!this.executionNames.includes(element.recipe_id)) {
           this.executionNames.push(element.recipe_id);
         }

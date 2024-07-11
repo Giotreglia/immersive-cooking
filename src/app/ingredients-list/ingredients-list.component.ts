@@ -449,6 +449,7 @@ export class IngredientsListComponent implements OnInit {
   ingredients: any[] = [];
   filteredIngredients: any;
   categories: any = [];
+  language: any = "";
 
   user: any;
   session_expire: any;
@@ -499,6 +500,12 @@ export class IngredientsListComponent implements OnInit {
     })
   }
 
+  getIngredientLang(index: any, lang: any) {
+    const ingredient = this.filteredIngredients[index];
+    let translation = ingredient.translation.find((language: any) => language.language == lang);
+    return translation.name;
+  }
+
   getCategories() {
     this.backend.getCategories().subscribe((resp) => {
       console.log(resp);
@@ -523,7 +530,22 @@ export class IngredientsListComponent implements OnInit {
     console.log(this.ingredients)
     console.log(this.categoryId)
     this.filteredIngredients = this.ingredients.filter(ingredient => {
-      const matchesName = ingredient.name.toLowerCase().includes(this.searchText.toLowerCase());
+      let matchesName;
+      if (this.language == '') {
+        matchesName = ingredient.name.toLowerCase().includes(this.searchText.toLowerCase());        
+      } 
+      if (this.language == 'en') {
+        matchesName = ingredient.translation[0].name.toLowerCase().includes(this.searchText.toLowerCase());        
+      }
+      if (this.language == 'fr') {
+        matchesName = ingredient.translation[1].name.toLowerCase().includes(this.searchText.toLowerCase());        
+      }
+      if (this.language == 'es') {
+        matchesName = ingredient.translation[2].name.toLowerCase().includes(this.searchText.toLowerCase());        
+      }
+      if (this.language == 'de') {
+        matchesName = ingredient.translation[3].name.toLowerCase().includes(this.searchText.toLowerCase());        
+      }
       const matchesCategory = this.categoryId == 0 || ingredient.id_category == this.categoryId;
       console.log(matchesCategory)
       return matchesName && matchesCategory;

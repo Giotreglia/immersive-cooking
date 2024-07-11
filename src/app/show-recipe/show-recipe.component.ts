@@ -97,25 +97,25 @@ export class ShowRecipeComponent implements OnInit {
   setColor(footprint: any) {
     console.log(footprint)
     if (footprint >= 0 && footprint < 1) {
-        this.selectedRecipe.color = '#8B0000';
+        this.selectedRecipe.color = '#004d00'; 
     } else if (footprint >= 1 && footprint < 2) {
-        this.selectedRecipe.color = '#FF0000';
+        this.selectedRecipe.color = '#006400'; 
     } else if (footprint >= 2 && footprint < 3) {
-        this.selectedRecipe.color = '#FF5733';
+        this.selectedRecipe.color = '#008000'; 
     } else if (footprint >= 3 && footprint < 4) {
-        this.selectedRecipe.color = '#FFA500';
+        this.selectedRecipe.color = '#ADFF2F'; 
     } else if (footprint >= 4 && footprint < 5) {
-        this.selectedRecipe.color = '#FFD700';
+        this.selectedRecipe.color = '#eded15'; 
     } else if (footprint >= 5 && footprint < 6) {
-        this.selectedRecipe.color = '#eded15';
+        this.selectedRecipe.color = '#FFD700';
     } else if (footprint >= 6 && footprint < 7) {
-        this.selectedRecipe.color = '#ADFF2F';
+        this.selectedRecipe.color = '#FFA500';
     } else if (footprint >= 7 && footprint < 8) {
-        this.selectedRecipe.color = '#008000';
+        this.selectedRecipe.color = '#FF5733';
     } else if (footprint >= 8 && footprint < 9) {
-        this.selectedRecipe.color = '#006400';
+        this.selectedRecipe.color = '#FF0000';
     } else if (footprint >= 9 && footprint <= 10) {
-        this.selectedRecipe.color = '#004d00';
+        this.selectedRecipe.color = '#8B0000';
     }
       console.log(this.selectedRecipe)
   }

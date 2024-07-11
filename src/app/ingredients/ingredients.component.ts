@@ -529,6 +529,12 @@ export class IngredientsComponent implements OnInit {
       this.filteredAndVisibleFoods = this.foods;
     })
   }
+
+  getIngredientLang(array: any, index: any, lang: any) {
+    const ingredient = array[index];
+    let translation = ingredient.translation.find((language: any) => language.language == lang);
+    return translation.name;
+  }
  
    // Array per gli ingredienti o le ricette selezionati
    done: any[] = [];
@@ -542,6 +548,8 @@ export class IngredientsComponent implements OnInit {
    totalCF: number = 0;
    totalEF: number = 0;
    totalWF: number = 0;
+
+   language: any = '';
  
    // Calcola il peso totale in base agli ingredienti/ricette selezionati
    getFootprint(element: {
@@ -951,7 +959,7 @@ export class IngredientsComponent implements OnInit {
     console.log(this.filteredFoods);
   }
 
-  filterIngredients() {
+/*   filterIngredients() {
     console.log(this.foods)
     console.log(this.filterCategory)
     console.log(this.filterName);
@@ -959,6 +967,32 @@ export class IngredientsComponent implements OnInit {
       const matchesName = ingredient.name.toLowerCase().includes(this.filterName.toLowerCase());
       const matchesCategory = this.filterCategory == '0' || ingredient.id_category == this.filterCategory;
       console.log(matchesName)
+      return matchesName && matchesCategory;
+    });
+  } */
+
+  filterIngredients() {
+    console.log(this.foods)
+    console.log(this.filterCategory)
+    this.filteredAndVisibleFoods = this.foods.filter(ingredient => {
+      let matchesName;
+      if (this.language == '') {
+        matchesName = ingredient.name.toLowerCase().includes(this.filterName.toLowerCase());        
+      } 
+      if (this.language == 'en') {
+        matchesName = ingredient.translation[0].name.toLowerCase().includes(this.filterName.toLowerCase());        
+      }
+      if (this.language == 'fr') {
+        matchesName = ingredient.translation[1].name.toLowerCase().includes(this.filterName.toLowerCase());        
+      }
+      if (this.language == 'es') {
+        matchesName = ingredient.translation[2].name.toLowerCase().includes(this.filterName.toLowerCase());        
+      }
+      if (this.language == 'de') {
+        matchesName = ingredient.translation[3].name.toLowerCase().includes(this.filterName.toLowerCase());        
+      }
+      const matchesCategory = this.filterCategory == 0 || ingredient.id_category == this.filterCategory;
+      console.log(matchesCategory)
       return matchesName && matchesCategory;
     });
   }

@@ -45,16 +45,25 @@
                         <div class="col-12">
                             <div class="col">
                                 <div class="mb-3">
-                                    <p class="alert alert-primary" role="alert">Inserisci il file .csv generato dal software Connected Cooking del forno iCombi pro Rational</p>
-                                    <label for="csvFileUpload" class="form-label">File cottura</label>
+                                    <p class="alert alert-primary" role="alert">Inserisci il file .csv (haccp.csv) generato dal software Connected Cooking del forno iCombi pro Rational</p>
+                                    <label for="csvFileUpload" class="form-label">File cottura .csv</label>
                                     <input class="form-control" type="file" #fileImportInput name="File Upload" id="csvFileUpload" name="file" [(ngModel)]="execution.file"  (change)="fileChangeListener($event)" accept=".csv">
                                 </div>        
                             </div>
                         </div>
+                        <div class="col-12">
+                            <div class="col">
+                                <div class="mb-3">
+                                    <p class="alert alert-primary" role="alert">Inserisci il file .pdf (report.pdf) generato dal software Connected Cooking del forno iCombi pro Rational</p>
+                                    <label for="csvFileUpload" class="form-label">File cottura .pdf</label>
+                                    <input class="form-control"  type="file" (change)="onFileSelected($event)" accept=".pdf"/>
+                                </div>
+                              </div>
+                        </div>
                     </form>
                 </div>
                 <div class="d-flex justify-content-end w-100 my-3">
-                    <button class="btn btn-lg btn-primary" type="submit" form="ingredient-form">Salva ingrediente</button>
+                    <button class="btn btn-lg btn-primary" type="submit" form="ingredient-form">Salva cottura</button>
                 </div>
             </div>
         </div>

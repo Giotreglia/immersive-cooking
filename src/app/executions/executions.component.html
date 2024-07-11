@@ -42,6 +42,8 @@
                                 <!-- <th scope="col">Operatore</th> -->
                                 <th scope="col">Porzioni</th>
                                 <th scope="col">Note</th>
+                                <th scope="col">Consumo kWh</th>
+                                <th scope="col">Emissioni Co2</th>
                                 <th scope="col">Data</th>
                                 <th scope="col">Azioni</th>
                             </tr>
@@ -65,7 +67,9 @@
     
                             </td>
                             <td><p class="note m-0">{{ execution.note }}</p></td>
-                            <td>{{ execution.creation_date | date : 'short' }}</td>
+                            <td><p class="note m-0">{{ execution.kwh }} kWh</p></td>
+                            <td><p class="note m-0">{{ execution.kwh * 0.65 | number: '1.2-2' }} kg Co2</p></td>
+                            <td>{{ execution.date }}</td>
                             <td>
                                 <div class="d-flex justify-content-center gap-2">
                                     <button class="btn btn-sm btn-icon btn-secondary" [routerLink]="['/dashboard/esecuzione', execution.id]">

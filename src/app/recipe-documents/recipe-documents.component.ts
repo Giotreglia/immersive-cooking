@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BackendService } from '../services/backend.service';
 import { Location } from '@angular/common';
@@ -19,26 +19,16 @@ export class RecipeDocumentsComponent implements OnInit {
   selectedRecipeId: any;
   sub: any;
   formData: FormData = new FormData();
-  documents: any = [
-    {
-      type: 'pdf',
-      name: 'Ricetta in inglese',
-      icon: 'fa-regular fa-file-pdf',
-      course: 'Inglese'
-    },
-    {
-      type: 'doc',
-      name: 'Ricerca sulla carbonara',
-      icon: 'fa-solid fa-file-word',
-      course: 'Storia'
-    },
-    {
-      type: 'csv',
-      name: 'Statistiche cottura carbonara',
-      icon: 'fa-solid fa-file-csv',
-      course: 'Matematica'
-    },
-  ]
+  documents: any = []
+  fileName: any;
+  fileData: any = {
+    id_ricetta: null,
+    title: null,
+    type: null,
+    course: null,
+    url: null
+  }
+  isLoading: boolean = false;
 
   ngOnInit(): void {
     let userStorage: any = localStorage.getItem('user');
@@ -47,6 +37,7 @@ export class RecipeDocumentsComponent implements OnInit {
       this.selectedRecipeId = +params['recipeId'];
     })
     this.getRecipe();
+    this.getFiles(this.selectedRecipeId);
   }
 
   routeTo(route: any) {
@@ -81,6 +72,102 @@ export class RecipeDocumentsComponent implements OnInit {
     this.backend.getRecipeIngredients(recipeId).subscribe((resp) => {
       console.log(resp);
       this.selectedRecipe.ingredients = resp;
+    })
+  }
+
+  getFiles(recipeId: any) {
+    this.backend.getFiles(recipeId).subscribe((resp) => {
+      console.log(resp);
+      this.documents = resp;
+      this.documents.forEach((element: { type: string; icon: string; }) => {
+        if (element.type == 'pdf') {
+          element.icon = 'fa-regular fa-file-pdf'
+        }
+        if (element.type == 'doc') {
+          element.icon = 'fa-solid fa-file-word'
+        }
+        if (element.type == 'csv') {
+          element.icon = 'fa-solid fa-file-csv'
+        }
+      });
+    })
+  }
+
+  imageSrc: any;
+  file: any;
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    this.file = file;
+    // Puoi gestire il file selezionato qui
+    console.log('File selezionato:', file);
+    if (file) {
+      if (event.target.files && event.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.imageSrc = e.target.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+      }}
+
+      this.fileName = file.name;
+      console.log(file.type)
+      console.log(this.fileName)
+      if (this.fileName.endsWith('.pdf')) {
+        this.fileData.type = 'pdf'
+      } else if (this.fileName.endsWith('.doc') || this.fileName.endsWith('.docx')) {
+        this.fileData.type = 'doc'
+      } else if (this.fileName.endsWith('.csv')) {
+        this.fileData.type = 'csv'
+      } else {
+        this.fileData.type = 'unknown';
+      }
+      console.log(this.fileData.type)
+    
+  }
+
+  submitForm() {
+    this.isLoading = true;
+    if (this.file) {
+      console.log(this.file);
+      let now = new Date().getTime();
+      console.log(now);
+      let basepath = 'file/';
+      const sanitizedFileName = this.file.name.replace(/[^a-zA-Z0-9.]/g, '');
+      let thumbFilename =  'file-' + now + '-' + sanitizedFileName;
+      console.log(thumbFilename);
+      this.backend.getpresigneduploadurl(basepath + thumbFilename, this.file.type).subscribe(
+        response => {
+          console.log(response)
+          let requestUrl = response.body;
+          this.backend.s3Upload(requestUrl, this.file, this.file.type).subscribe(
+            response => {
+              console.log(response);
+              if(response.status==200 || response.status== 201) {
+                this.formData.append('id_ricetta', this.selectedRecipeId);
+                this.formData.append('url', thumbFilename);
+                this.formData.append('title', this.fileData.title);
+                this.formData.append('course', this.fileData.course);
+                this.formData.append('type', this.fileData.type);
+                this.backend.addFile(this.formData).subscribe((resp) => {
+                  console.log(resp);
+                  this.isLoading = false;
+                  this.getFiles(this.selectedRecipeId);
+                  const myModalEl: any = document.getElementById('addModal');
+                  console.log(myModalEl)
+                })
+              }
+            })
+        }
+      )
+    }
+  }
+
+  deleteFile(fileId: any) {
+    let formData: FormData = new FormData();
+    formData.append('id', fileId);
+    this.backend.deleteFile(fileId).subscribe((resp) => {
+      console.log(resp);
+      this.getFiles(this.selectedRecipeId);
     })
   }
 

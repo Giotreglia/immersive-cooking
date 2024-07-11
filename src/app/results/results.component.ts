@@ -54,6 +54,7 @@ export class ResultsComponent implements OnInit{
     this.selectedExecution = this.executions.find((execution: { id: any; }) => execution.id == id);
     console.log("this.selectedExecution in getSelectedExecution: ",this.selectedExecution)
     if (this.selectedExecution) {
+      this.totalKw = parseFloat(this.selectedExecution.kwh);
       if(this.selectedExecution.csv_name)
       {
         this.results = this.selectedExecution.csv_name.split(",");
@@ -70,7 +71,6 @@ export class ResultsComponent implements OnInit{
         console.log(this.tableHead);
       }
     }
-    this.getTotalKw();
   }
 
 }
