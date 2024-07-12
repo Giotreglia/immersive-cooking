@@ -24,33 +24,9 @@
                         <button class="btn btn-lg btn-success" (click)="openPDF()"><i class="fa-solid fa-download me-3"></i>Scarica report</button>
                     </div>
                 </div>
-                <!-- <div class="fs-5">
-                    <span class="me-1"><i class="fa-brands fa-envira" [style.color]="selectedExecution.color"></i></span>
-                    <span class="fw-bold" [style.color]="selectedExecution.color">{{selectedExecution.recipe.footprint_score | number : '1.0-1'}}</span>
-                    <span class="fw-bold"> / 10</span>
-                </div> -->
             </div>
 
             <div class="rounded px-3 d-flex flex-column justify-content-between flex-grow-1" style="background-color: white;">
-                <!-- <div class="row">
-                    <div class="col-6 ps-0">
-                        <h5>Ingredienti</h5>
-                        <ul class="list-group">
-                            <li *ngFor="let ingredient of selectedExecution.recipe.ingredients; index as i" class="list-group-item d-flex justify-content-between align-items-center">
-                              <img class="ingredient-img" [src]="ingredient.cover_image_name" alt="">
-                              <span>{{ingredient.name}}</span>
-                              <span class="badge text-bg-primary rounded-pill">{{selectedRecipe.recipeIngredients[i].weight}} gr.</span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="col-6">
-                        <div class="d-flex justify-content-center w-100">
-                            <div class="position-relative overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded h-300px
-                            d-flex justify-content-center align-content-center overflow-hidden" style="width: 300px;" [style.background-image]="'url('+selectedExecution.recipe.cover+')'">
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
                 <div class="row d-flex mt-2 px-0">
                     <div class="w-50 px-0">
                         <h5>Data Cottura</h5>
@@ -69,35 +45,6 @@
                         <p>{{selectedExecution.note}}</p>
                     </div>
                 </div>
-                <!-- <div class="row mt-5">
-                    <div class="col-12 ps-0">
-                        <h5>Descrizione ricetta</h5>
-                        <p>{{selectedExecution.description}} Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid, iure quas, a deleniti doloribus reiciendis esse, amet necessitatibus ullam ut voluptatem quo similique libero placeat perferendis corrupti ad iusto reprehenderit. Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit est neque maiores officia fugiat incidunt totam dolorum molestiae praesentium. Necessitatibus ipsum dolorem, facilis corporis eveniet magnam amet iste nobis quibusdam. Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint aperiam minus voluptates, laboriosam consequatur vero voluptatibus alias illum ea, totam, optio blanditiis dolores? Minima consequatur adipisci, accusantium magni voluptas qui! Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio ratione consequatur temporibus quam repellendus. Odit vel debitis dolor doloremque saepe optio esse, fugit expedita aliquid odio, iste laudantium obcaecati modi.</p>
-                    </div>
-                </div>
-                <div class="row px-0">
-                    <div class="my-3 d-flex justify-content-between gap-2 px-0">
-                        <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
-                            <div class="card-header">Consumo di acqua</div>
-                            <div class="card-body d-flex justify-content-center align-items-center">
-                                <h3 class="card-title">{{totalWF / 1000 | number: "1.0-3"}} litri</h3>
-                            </div>
-                        </div>
-                        <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
-                            <div class="card-header">Consumo di suolo</div>
-                            <div class="card-body d-flex justify-content-center align-items-center">
-                                <h3 class="card-title">{{totalEF | number: "1.0-3"}} mq</h3>
-                            </div>
-                        </div>
-                        <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
-                            <div class="card-header">Emissioni di CO2</div>
-                            <div class="card-body d-flex justify-content-center align-items-center">
-                                <h3 class="card-title">{{totalCF | number: "1.0-3"}} kg</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-            </div>
         </div>
         <div class="rounded border py-3">
             <app-results [selectedExecutionId]="selectedExecutionId"></app-results>
@@ -109,7 +56,7 @@
     <div class="container-fluid py-5">
         <div *ngIf="selectedExecution" class="row shadow p-4 rounded">
             <div *ngIf="selectedExecution.recipe" class="col-12 d-flex flex-column justify-content-between h-100 border mb-3 rounded py-3">
-                <div class="d-flex flex-column w-100">
+                <div class="d-flex flex-column w-100 mb-3">
                     <div class="d-flex w-100 justify-content-between align-items-center">
                         <div class="d-flex align-items-baseline gap-3">
                             <h1 class="fs-1 mb-0 d-inline">{{selectedExecution.recipe.name}}</h1>
@@ -119,33 +66,32 @@
                                 <span *ngIf="selectedExecution.portion_unit == 'bakingTray'"><i class="fa-solid fa-layer-group me-2"></i>x {{selectedExecution.portion_number}} teglie</span>
                             </div>
                         </div>
-                    </div>
-                    <div class="fs-5">
-                        <span class="me-1"><i class="fa-brands fa-envira" [style.color]="selectedExecution.color"></i></span>
-                        <span class="fw-bold" [style.color]="selectedExecution.color">{{selectedExecution.recipe.footprint_score | number : '1.0-1'}}</span>
-                        <span class="fw-bold"> / 10</span>
+                        <div class="fs-3">
+                            <span class="me-1"><i class="fa-brands fa-envira" [style.color]="selectedExecution.color"></i></span>
+                            <span class="fw-bold" [style.color]="selectedExecution.color">{{selectedExecution.recipe.footprint_score | number : '1.0-1'}}</span>
+                            <span class="fw-bold"> / 10</span>
+                        </div>
                     </div>
                 </div>
 
                 <div class="rounded px-3 d-flex flex-column justify-content-between flex-grow-1" style="background-color: white;">
                     <div class="row">
-                        <div class="col-6 ps-0">
+                        <div class="col-12 ps-0">
                             <h5>Ingredienti</h5>
-                            <ul class="list-group">
-                                <li *ngFor="let ingredient of selectedExecution.recipe.ingredients; index as i" class="list-group-item d-flex justify-content-between align-items-center">
-                                  <img class="ingredient-img" [src]="ingredient.s3filename" alt="">
-                                  <span>{{ingredient.name}}</span>
-                                  <span class="badge text-bg-primary rounded-pill">{{selectedRecipe.recipeIngredients[i].weight}} gr.</span>
+                            <ul class="list-group border-0">
+                                <li *ngFor="let ingredient of selectedExecution.recipe.ingredients; index as i" class="list-group-item d-flex align-items-center">
+                                  <span class="me-3">{{ingredient.name}}</span>
+                                  <span>{{selectedRecipe.recipeIngredients[i].weight}} gr.</span>
                                 </li>
                             </ul>
                         </div>
-                        <div class="col-6">
+<!--                         <div class="col-6">
                             <div class="d-flex justify-content-center w-100">
                                 <div class="position-relative overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded h-300px
                                 d-flex justify-content-center align-content-center overflow-hidden" style="width: 300px;" [style.background-image]="'url('+selectedExecution.recipe.s3filename+')'">
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="row d-flex mt-2 px-0">
                         <div class="w-50 px-0">
@@ -165,39 +111,131 @@
                             <p>{{selectedExecution.note}}</p>
                         </div>
                     </div>
-                    <div class="row mt-5">
+<!--                     <div class="row mt-5">
                         <div class="col-12 ps-0">
                             <h5>Descrizione ricetta</h5>
-                            <p>{{selectedExecution.description}} Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid, iure quas, a deleniti doloribus reiciendis esse, amet necessitatibus ullam ut voluptatem quo similique libero placeat perferendis corrupti ad iusto reprehenderit. Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit est neque maiores officia fugiat incidunt totam dolorum molestiae praesentium. Necessitatibus ipsum dolorem, facilis corporis eveniet magnam amet iste nobis quibusdam. Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint aperiam minus voluptates, laboriosam consequatur vero voluptatibus alias illum ea, totam, optio blanditiis dolores? Minima consequatur adipisci, accusantium magni voluptas qui! Lorem ipsum dolor sit amet, consectetur adipisicing elit. Optio ratione consequatur temporibus quam repellendus. Odit vel debitis dolor doloremque saepe optio esse, fugit expedita aliquid odio, iste laudantium obcaecati modi.</p>
+                            <p>{{selectedExecution.description}}</p>
                         </div>
-                    </div>
+                    </div> -->
+<!--                     <div class="row px-0 mt-3">
+                        <h3 class="ps-0">Dati nutrizionali della ricetta</h3>
+                        <div class="my-3 d-flex justify-content-between gap-2 px-0">
+                            <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
+                                <div class="card-header">Calorie</div>
+                                <div class="card-body d-flex justify-content-center align-items-center">
+                                    <h3 class="card-title">{{ getTotalKcal() | number: "1.0-3"}} Kcal</h3>
+                                </div>
+                            </div>
+                            <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
+                                <div class="card-header">Proteine</div>
+                                <div class="card-body d-flex justify-content-center align-items-center">
+                                    <h3 class="card-title">{{ getTotalValue('proteins') | number: "1.0-3"}} gr</h3>
+                                </div>
+                            </div>
+                            <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
+                                <div class="card-header">Carboidrati</div>
+                                <div class="card-body d-flex justify-content-center align-items-center">
+                                    <h3 class="card-title">{{ getTotalValue('carbohydrates') | number: "1.0-3"}} gr</h3>
+                                </div>
+                            </div>
+                            <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
+                                <div class="card-header">Grassi</div>
+                                <div class="card-body d-flex justify-content-center align-items-center">
+                                    <h3 class="card-title">{{ getTotalValue('fats') | number: "1.0-3"}} gr</h3>
+                                </div>
+                            </div>
+                            <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
+                                <div class="card-header">Zuccheri</div>
+                                <div class="card-body d-flex justify-content-center align-items-center">
+                                    <h3 class="card-title">{{ getTotalValue('sugars') | number: "1.0-3"}} gr</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
                     <div class="row px-0">
+                        <h3 class="ps-0">Footprint della ricetta</h3>
                         <div class="my-3 d-flex justify-content-between gap-2 px-0">
                             <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
                                 <div class="card-header">Consumo di acqua</div>
                                 <div class="card-body d-flex justify-content-center align-items-center">
-                                    <h3 class="card-title">{{totalWF / 1000 | number: "1.0-3"}} litri</h3>
+                                    <h3 class="card-title">{{totalWF / 100 | number: "1.0-3"}} litri</h3>
                                 </div>
                             </div>
                             <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
                                 <div class="card-header">Consumo di suolo</div>
                                 <div class="card-body d-flex justify-content-center align-items-center">
-                                    <h3 class="card-title">{{totalEF | number: "1.0-3"}} mq</h3>
+                                    <h3 class="card-title">{{totalEF / 10 | number: "1.0-3"}} mq</h3>
                                 </div>
                             </div>
                             <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
                                 <div class="card-header">Emissioni di CO2</div>
                                 <div class="card-body d-flex justify-content-center align-items-center">
-                                    <h3 class="card-title">{{totalCF | number: "1.0-3"}} kg</h3>
+                                    <h3 class="card-title">{{totalCF / 10 | number: "1.0-3"}} kg</h3>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="row px-0">
+                        <h3 class="ps-0">Footprint della cottura</h3>
+                        <div class="col-12 px-0">
+                            <p class="px-0">Per produrre un kWh elettrico vengono bruciati mediamente l'equivalente di 2,56 kWh sotto forma di combustibili fossili e di conseguenza emessi nell'aria circa 0,65 kg di anidride carbonica</p>
+                        </div>
+                        <div class="my-3 d-flex justify-content-between gap-2 px-0">
+                            <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
+                                <div class="card-header">Consumo totale in Kw</div>
+                                <div class="card-body d-flex justify-content-center align-items-center">
+                                    <h3 class="card-title">{{selectedExecution.kwh}} Kw</h3>
+                                </div>
+                            </div>
+                            <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
+                                <div class="card-header">CO2 x Kw (media italiana)</div>
+                                <div class="card-body d-flex justify-content-center align-items-center">
+                                    <h3 class="card-title">0,65 kg/kw</h3>
+                                </div>
+                            </div>
+                            <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
+                                <div class="card-header">Emissioni CO2 cottura</div>
+                                <div class="card-body d-flex justify-content-center align-items-center">
+                                    <h3 class="card-title">{{selectedExecution.kwh * 0.65 | number: '1.2-2'}} kg Co2</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<!--                     <div class="d-flex flex-column">
+                        <h3 class="ps-0">Footprint della cottura</h3>
+                        <div class="d-flex w-100 justify-content-end">
+                            <div class="row px-0">
+                                <div class="col-12">
+                                    <p >Per produrre un kWh elettrico vengono bruciati mediamente l'equivalente di 2,56 kWh sotto forma di combustibili fossili e di conseguenza emessi nell'aria circa 0,65 kg di anidride carbonica</p>
+                                </div>
+                                <div class="my-3 d-flex justify-content-between gap-2 px-0">
+                                    <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
+                                        <div class="card-header">Consumo totale in Kw</div>
+                                        <div class="card-body d-flex justify-content-center align-items-center">
+                                            <h3 class="card-title">{{selectedExecution.kwh}} Kw</h3>
+                                        </div>
+                                    </div>
+                                    <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
+                                        <div class="card-header">CO2 x Kw (media italiana)</div>
+                                        <div class="card-body d-flex justify-content-center align-items-center">
+                                            <h3 class="card-title">0,65 kg/kw</h3>
+                                        </div>
+                                    </div>
+                                    <div class="card text-bg-light mb-3" style="width: calc(100% / 3); height: 150px;">
+                                        <div class="card-header">Emissioni CO2 cottura</div>
+                                        <div class="card-body d-flex justify-content-center align-items-center">
+                                            <h3 class="card-title">{{selectedExecution.kwh * 0.65 | number: '1.2-2'}} kg Co2</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
                 </div>
             </div>
-            <div class="rounded border py-3">
+<!--             <div class="rounded border py-3">
                 <app-results [selectedExecutionId]="selectedExecutionId" (totalKwUsed) = "onTotalKwEventEmitted($event)" (executionDetail) = "onExecutionDetailEventEmitted($event)"></app-results>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>

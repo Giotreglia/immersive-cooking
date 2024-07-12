@@ -26,6 +26,8 @@ export class NewExecutionComponent implements OnInit {
     note: null,
     kWh: null
   };
+  isCsvFileLoaded = false;
+  isPdfFileLoaded = false;
 
   constructor(private ngxCsvParser: NgxCsvParser, private http: HttpClient, private router: Router, private backend: BackendService) {
         // Configura il workerSrc di pdfjsLib
@@ -36,6 +38,8 @@ export class NewExecutionComponent implements OnInit {
   @ViewChild('fileImportInput') fileImportInput: any;
 
   ngOnInit(): void {
+    this.isCsvFileLoaded = false;
+    this.isPdfFileLoaded = false;
     let userStorage: any = localStorage.getItem('user');
     this.user = JSON.parse(userStorage);
     this.getRecipes();
@@ -43,6 +47,7 @@ export class NewExecutionComponent implements OnInit {
   }
 
   fileChangeListener($event: any): void {
+    this.isCsvFileLoaded = true;
     const files = $event.srcElement.files;
     this.header =
         (this.header as unknown as string) === 'true' ||
@@ -109,6 +114,7 @@ export class NewExecutionComponent implements OnInit {
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
+      this.isPdfFileLoaded = true;
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.fileUrl = e.target.result;

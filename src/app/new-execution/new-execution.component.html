@@ -19,18 +19,18 @@
                     <form class="row g-3" id="ingredient-form" (ngSubmit)="submitForm()" method="post">
                         <div class="col">
                             <label for="inputAddress" class="form-label">Seleziona ricetta</label>
-                            <select type="text" class="form-select" id="inputAddress" name="category" placeholder="Nome categoria" [(ngModel)]="execution.recipe_id"> <!-- [(ngModel)]="ingredient.category" -->
+                            <select type="text" class="form-select" id="inputAddress" name="category" placeholder="Nome categoria" [(ngModel)]="execution.recipe_id" required> <!-- [(ngModel)]="ingredient.category" -->
                                 <option value="0">Scegli ricetta</option>
                                 <option *ngFor="let recipe of recipes" [value]="recipe.id">{{recipe.name}}</option>
                             </select>
                         </div>    
                         <div class="col">
                             <label for="inputAddress" class="form-label">Numero porzioni</label>
-                            <input type="number" class="form-control" id="inputAddress" name="portion_number" placeholder="numero porzioni" [(ngModel)]="execution.portion_number">        
+                            <input type="number" class="form-control" id="inputAddress" name="portion_number" placeholder="numero porzioni" [(ngModel)]="execution.portion_number" required>        
                         </div>
                         <div class="col">
                             <label for="inputAddress" class="form-label">Unità di misura porzioni</label>
-                            <select type="text" class="form-select" id="inputAddress" name="category" placeholder="Nome categoria" [(ngModel)]="execution.portion_unit"> <!-- [(ngModel)]="ingredient.category" -->
+                            <select type="text" class="form-select" id="inputAddress" name="category" placeholder="Nome categoria" [(ngModel)]="execution.portion_unit" required> <!-- [(ngModel)]="ingredient.category" -->
                                 <option value="person">persone</option>
                                 <option value="gram">grammi</option>
                                 <option value="bakingTray">teglie</option>
@@ -46,8 +46,8 @@
                             <div class="col">
                                 <div class="mb-3">
                                     <p class="alert alert-primary" role="alert">Inserisci il file .csv (haccp.csv) generato dal software Connected Cooking del forno iCombi pro Rational</p>
-                                    <label for="csvFileUpload" class="form-label">File cottura .csv</label>
-                                    <input class="form-control" type="file" #fileImportInput name="File Upload" id="csvFileUpload" name="file" [(ngModel)]="execution.file"  (change)="fileChangeListener($event)" accept=".csv">
+                                    <label for="csvFileUpload" class="form-label">File cottura .csv <span class="ms-3 fs-6 fst-italic">* obbligatorio</span></label>
+                                    <input class="form-control" type="file" #fileImportInput name="File Upload" id="csvFileUpload" name="file" [(ngModel)]="execution.file"  (change)="fileChangeListener($event)" accept=".csv" required>
                                 </div>        
                             </div>
                         </div>
@@ -55,15 +55,15 @@
                             <div class="col">
                                 <div class="mb-3">
                                     <p class="alert alert-primary" role="alert">Inserisci il file .pdf (report.pdf) generato dal software Connected Cooking del forno iCombi pro Rational</p>
-                                    <label for="csvFileUpload" class="form-label">File cottura .pdf</label>
-                                    <input class="form-control"  type="file" (change)="onFileSelected($event)" accept=".pdf"/>
+                                    <label for="csvFileUpload" class="form-label">File cottura .pdf <span class="ms-3 fs-6 fst-italic">* obbligatorio</span></label>
+                                    <input class="form-control"  type="file" (change)="onFileSelected($event)" accept=".pdf" required/>
                                 </div>
                               </div>
                         </div>
                     </form>
                 </div>
                 <div class="d-flex justify-content-end w-100 my-3">
-                    <button class="btn btn-lg btn-primary" type="submit" form="ingredient-form">Salva cottura</button>
+                    <button class="btn btn-lg btn-primary" type="submit" form="ingredient-form" [disabled]="!isCsvFileLoaded || !isPdfFileLoaded ">Salva cottura</button>
                 </div>
             </div>
         </div>

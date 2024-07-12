@@ -5,11 +5,11 @@ import { BackendService } from '../services/backend.service';
 import { Location } from '@angular/common';
 import { NgxCsvParser, NgxCSVParserError } from 'ngx-csv-parser';
 import { LOCALE_ID } from '@angular/core';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/it';
 import { PDFDocument, rgb } from 'pdf-lib';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 registerLocaleData(localeFr, 'it');
 
 @Component({
@@ -220,7 +220,37 @@ export class ShowExecutionComponent implements OnInit {
     this.totalEF = total;
   }
 
-  async openPDF() {
+  getTotalKcal() {
+    let totalKcal: number = 0;
+    this.selectedRecipe.recipeIngredients.forEach((element: any, index: any) => {
+        totalKcal += (this.selectedRecipe.ingredients[index].kcal / 100) * element.weight;
+      })
+      console.log(totalKcal)
+    return totalKcal;
+  }
+
+  getTotalValue(value: any) {
+    let total: number = 0;
+    this.selectedRecipe.recipeIngredients.forEach((food: any, index: any) => {
+          if (value == "proteins") {
+            console.log(value + ' ' + this.selectedRecipe.ingredients[index].protein)
+            total += (this.selectedRecipe.ingredients[index].protein / 100) * food.weight;
+          } else if (value == "carbohydrates") {
+            console.log(value + ' ' + this.selectedRecipe.ingredients[index].carbohydrates)
+            total += (this.selectedRecipe.ingredients[index].carbohydrates / 100) * food.weight;
+          } else if (value == "fats") {
+            console.log(value + ' ' + this.selectedRecipe.ingredients[index].fats)
+            total += (this.selectedRecipe.ingredients[index].fats / 100) * food.weight;
+          } else if (value == "sugars") {
+            console.log(value + ' ' + this.selectedRecipe.ingredients[index].sugar)
+            total += (this.selectedRecipe.ingredients[index].sugar / 100) * food.weight;
+          }
+    })
+    console.log(value + ' ' + total)
+    return total;
+  }
+
+/*   async openPDF() {
     this.showResults = true;
     const pdfDoc = await PDFDocument.create();
     let page = pdfDoc.addPage([595.28, 841.89]);
@@ -677,7 +707,7 @@ export class ShowExecutionComponent implements OnInit {
     link.href = url;
     link.download = `report-${this.selectedRecipe.name.toLowerCase()}-${this.selectedExecution.creation_date}.pdf`;
     link.click();
-  }
+  } */
 
   drawWrappedText(text: any, x: any, y: any, maxWidth: any, fontSize: any, lineHeight: any, page: any, font: any, pdfDoc: any) {
     const words = text.split(' ');
@@ -729,5 +759,34 @@ export class ShowExecutionComponent implements OnInit {
       lines.push(line.trim());
     });
     return lines;
+  }
+
+  openPDF() {
+    this.showResults = true;
+    const data = document.getElementById('results');
+    console.log('fuori')
+    if (data) {
+      html2canvas(data).then((canvas) => {
+        const imgWidth = 210; // Larghezza del PDF in mm
+        const pageHeight = 297; // Altezza del PDF in mm
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        let position = 0;
+
+        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft >= 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+
+        pdf.save(this.selectedRecipe.name+'.pdf');
+      });
+    }
   }
 }
