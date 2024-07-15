@@ -762,7 +762,6 @@ export class ShowExecutionComponent implements OnInit {
   }
 
   openPDF() {
-    this.showResults = true;
     const data = document.getElementById('results');
     console.log('fuori')
     if (data) {
@@ -786,6 +785,7 @@ export class ShowExecutionComponent implements OnInit {
         }
 
         pdf.save(this.selectedRecipe.name+'.pdf');
+        this.showResults = false;
       });
     }
   }

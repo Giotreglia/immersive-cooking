@@ -21,7 +21,8 @@
                         </div>
                     </div>
                     <div class="d-flex gap-3 align-items-center">
-                        <button class="btn btn-lg btn-success" (click)="openPDF()"><i class="fa-solid fa-download me-3"></i>Scarica report</button>
+                        <button *ngIf="!showResults" class="btn btn-lg btn-primary" (click)="showResults = true"><i class="fa-solid fa-plus me-3"></i>Genera report</button>
+                        <button *ngIf="showResults" class="btn btn-lg btn-success" (click)="openPDF()"><i class="fa-solid fa-download me-3"></i>Scarica report</button>
                     </div>
                 </div>
             </div>
